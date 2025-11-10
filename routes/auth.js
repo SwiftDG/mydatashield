@@ -12,10 +12,13 @@ const router = express.Router();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.GMAIL_USER,       // your Gmail
-    pass: process.env.GMAIL_APP_PASS,   // app password
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
   },
 });
+
+// Store pending verifications in memory (in production, use Redis)
+const pendingVerifications = new Map();
 
 // Helper: Send verification email
 async function sendVerificationEmail(email, code) {
@@ -43,9 +46,16 @@ async function sendVerificationEmail(email, code) {
 
 router.get("/signup", (req, res) => res.render("signup"));
 router.get("/login", (req, res) => res.render("login"));
-router.get("/verify", (req, res) => res.render("verify", { email: "" }));
+
+// Updated verify route to accept email parameter
+router.get("/verify", (req, res) => {
+  const email = req.query.email || req.session.pendingEmail || "";
+  res.render("verify", { email });
+});
+
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
+  req.session.destroy();
   res.redirect("/");
 });
 
@@ -53,17 +63,26 @@ router.get("/logout", (req, res) => {
    POST ROUTES
 ========================= */
 
-// SIGNUP
+// SIGNUP - Updated to redirect to verify page
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password, role, terms } = req.body;
-    if (!terms) return res.status(400).send("You must agree to terms");
+    if (!terms) {
+      return res.status(400).render("signup", { 
+        error: "You must agree to terms and conditions" 
+      });
+    }
 
+    // Check if user exists
     const existing = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
-    if (existing.rows.length > 0) return res.status(400).send("User already exists");
+    if (existing.rows.length > 0) {
+      return res.status(400).render("signup", { 
+        error: "User already exists with this email" 
+      });
+    }
 
+    // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await pool.query(
       "INSERT INTO users (name, email, password, role, verified) VALUES ($1, $2, $3, $4, false) RETURNING id",
       [name, email, hashedPassword, role]
@@ -72,78 +91,178 @@ router.post("/signup", async (req, res) => {
 
     // Generate verification code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
+    // Store verification code in database
     await pool.query(
       "INSERT INTO email_verifications (user_id, code, expires_at) VALUES ($1, $2, $3)",
       [userId, code, expires]
     );
 
+    // Store in session for resend functionality
+    req.session.pendingEmail = email;
+    req.session.pendingUserId = userId;
+
     try {
       await sendVerificationEmail(email, code);
+      // Redirect to verify page with email as query parameter
+      res.redirect(`/verify?email=${encodeURIComponent(email)}`);
     } catch (mailErr) {
       console.error("Nodemailer error:", mailErr);
-      return res.status(500).send("User created but failed to send verification email. Check logs.");
+      // Still redirect to verify page but show error
+      res.redirect(`/verify?email=${encodeURIComponent(email)}&error=email_failed`);
     }
-
-    res.status(201).send("Signup successful! Check your email for verification code.");
   } catch (err) {
     console.error("Signup error:", err);
-    res.status(500).send("Error creating user: " + (err.message || err));
+    res.status(500).render("signup", { 
+      error: "Error creating user: " + err.message 
+    });
   }
 });
 
-// VERIFY EMAIL
+// VERIFY EMAIL - Updated to handle successful verification
 router.post("/verify", async (req, res) => {
   try {
     const { email, code } = req.body;
 
-    const userRes = await pool.query("SELECT id FROM users WHERE email=$1", [email]);
-    if (userRes.rows.length === 0) return res.status(404).send("User not found");
+    // Find user
+    const userRes = await pool.query("SELECT id, role FROM users WHERE email=$1", [email]);
+    if (userRes.rows.length === 0) {
+      return res.status(404).render("verify", { 
+        email, 
+        error: "User not found" 
+      });
+    }
 
     const userId = userRes.rows[0].id;
+    const userRole = userRes.rows[0].role;
 
+    // Check verification code
     const codeRes = await pool.query(
       "SELECT * FROM email_verifications WHERE user_id=$1 AND code=$2 AND expires_at > NOW()",
       [userId, code]
     );
-    if (codeRes.rows.length === 0) return res.status(400).send("Invalid or expired code");
 
+    if (codeRes.rows.length === 0) {
+      return res.status(400).render("verify", { 
+        email, 
+        error: "Invalid or expired verification code" 
+      });
+    }
+
+    // Mark user as verified and clean up
     await pool.query("UPDATE users SET verified=true WHERE id=$1", [userId]);
     await pool.query("DELETE FROM email_verifications WHERE user_id=$1", [userId]);
 
-    res.send("Email verified! You can now log in.");
+    // Clear session
+    req.session.pendingEmail = null;
+    req.session.pendingUserId = null;
+
+    // Auto-login after verification
+    const token = jwt.sign({ id: userId, role: userRole }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("token", token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
+
+    // Redirect to appropriate dashboard
+    if (userRole === "organization") {
+      res.redirect("/org-dashboard");
+    } else {
+      res.redirect("/user-dashboard");
+    }
   } catch (err) {
     console.error("Verify error:", err);
-    res.status(500).send("Error verifying email: " + (err.message || err));
+    res.status(500).render("verify", { 
+      email: req.body.email, 
+      error: "Error verifying email: " + err.message 
+    });
   }
 });
 
-// LOGIN
+// RESEND VERIFICATION CODE
+router.post("/resend-verification", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const userRes = await pool.query("SELECT id FROM users WHERE email=$1", [email]);
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userId = userRes.rows[0].id;
+
+    // Generate new code
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 10 * 60 * 1000);
+
+    // Update verification code
+    await pool.query(
+      "UPDATE email_verifications SET code=$1, expires_at=$2, created_at=NOW() WHERE user_id=$3",
+      [newCode, expires, userId]
+    );
+
+    try {
+      await sendVerificationEmail(email, newCode);
+      res.json({ success: true, message: "Verification code resent!" });
+    } catch (mailErr) {
+      console.error("Resend email error:", mailErr);
+      res.status(500).json({ error: "Failed to resend verification email" });
+    }
+  } catch (err) {
+    console.error("Resend verification error:", err);
+    res.status(500).json({ error: "Error resending verification code" });
+  }
+});
+
+// LOGIN - Updated to check verification status
 router.post("/login", async (req, res) => {
   try {
     const { email, password, remember } = req.body;
 
     const userRes = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
-    if (userRes.rows.length === 0) return res.status(404).send("User not found");
+    if (userRes.rows.length === 0) {
+      return res.status(404).render("login", { 
+        error: "User not found" 
+      });
+    }
 
     const user = userRes.rows[0];
-    if (!user.verified) return res.status(403).send("Please verify your email first");
+    
+    // Check if email is verified
+    if (!user.verified) {
+      // Redirect to verification page
+      req.session.pendingEmail = email;
+      req.session.pendingUserId = user.id;
+      return res.redirect(`/verify?email=${encodeURIComponent(email)}`);
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).send("Incorrect password");
+    if (!match) {
+      return res.status(401).render("login", { 
+        error: "Incorrect password" 
+      });
+    }
 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: remember ? "7d" : "1h",
     });
 
-    res.cookie("token", token, { httpOnly: true, maxAge: remember ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000 });
+    res.cookie("token", token, { 
+      httpOnly: true, 
+      maxAge: remember ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000 
+    });
 
-    if (user.role === "organization") res.redirect("/org-dashboard");
-    else res.redirect("/user-dashboard");
+    if (user.role === "organization") {
+      res.redirect("/org-dashboard");
+    } else {
+      res.redirect("/user-dashboard");
+    }
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).send("Error logging in: " + (err.message || err));
+    res.status(500).render("login", { 
+      error: "Error logging in: " + err.message 
+    });
   }
 });
 
