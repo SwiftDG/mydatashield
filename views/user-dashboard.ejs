@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<h2>User Dashboard</h2>
+
+<h4>Your Consents</h4>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Organization</th>
+      <th>Consent Given</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% consents.forEach(c => { %>
+      <tr>
+        <td><%= c.org_name %></td>
+        <td><%= c.consent_given ? 'Yes' : 'No' %></td>
+        <td>
+          <form action="/toggle-consent" method="POST">
+            <input type="hidden" name="userId" value="<%= user.id %>">
+            <input type="hidden" name="consent" value="<%= !c.consent_given %>">
+            <button class="btn btn-sm btn-secondary">Toggle</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>
