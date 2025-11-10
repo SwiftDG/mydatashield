@@ -3,41 +3,29 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pool from "../config/db.js";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
 dotenv.config();
 const router = express.Router();
 
-// ==================== NODEMAILER CONFIGURATION ====================
-// Updated Gmail configuration for Render
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // Use TLS
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false, // Bypass certificate validation
-  },
-  connectionTimeout: 30000, // 30 seconds
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-  debug: true, // Detailed logs
-  logger: true
+// ==================== MAILERSEND CONFIGURATION ====================
+const mailersend = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_KEY,
 });
 
 // ==================== EMAIL FUNCTION ====================
 async function sendVerificationEmail(email, code) {
   try {
     console.log(`Attempting to send email to: ${email}`);
+
+    const sentFrom = new Sender(process.env.MAILERSEND_SENDER_EMAIL, "MyDataShield");
+    const recipients = [new Recipient(email, email)];
     
-    const mailOptions = {
-      from: `"MyDataShield" <${process.env.GMAIL_USER}>`,
-      to: email,
-      subject: "MyDataShield Verification Code",
-      html: `
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(recipients)
+      .setSubject("MyDataShield Verification Code")
+      .setHtml(`
         <div style="font-family: Arial, sans-serif; padding: 20px; text-align:center;">
           <img src="https://raw.githubusercontent.com/SwiftDG/mydatashield/e19bbd45d2dab8f04d835244c0c0269637ca923c/AQPdVsCAiziCkGNrvMqvYBgAzQuvOTqSWcYtM2bMlILVipKnlI4GQiEydyoPioVv0HKt2M5-Tr5Ir8s-VvTbgQsVdbe_Q1Dn1zDcRGjhEEG8YcEtVRv_6fjxeI7oDUOgRorwZ_ofVY4g2Aet7vqwr-YECaSJ.jpeg" alt="MyDataShield Logo" style="width:100px; height:auto; margin-bottom:20px;" />
           <h2>Verify Your Email</h2>
@@ -45,20 +33,15 @@ async function sendVerificationEmail(email, code) {
           <h1 style="color:#2e86de;">${code}</h1>
           <p>This code will expire in 10 minutes.</p>
         </div>
-      `,
-    };
+      `)
+      .setText(`Your MyDataShield verification code is: ${code}. This code will expire in 10 minutes.`);
 
-    // Verify connection first
-    await transporter.verify();
-    console.log("SMTP connection verified successfully");
-
-    // Send email
-    const result = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", result.messageId);
+    const response = await mailersend.email.send(emailParams);
+    console.log("Email sent successfully via MailerSend API");
     return true;
     
   } catch (error) {
-    console.error("Email sending failed:", error);
+    console.error("MailerSend API error:", error);
     throw error;
   }
 }
@@ -142,7 +125,7 @@ router.post("/signup", async (req, res) => {
     // Try to send email (but continue even if it fails)
     try {
       await sendVerificationEmail(email, code);
-      console.log("Email sent successfully");
+      console.log("Email sent successfully via MailerSend");
     } catch (emailError) {
       console.error("EMAIL FAILED:", emailError);
       // Don't block the flow - user can still verify with code from logs
