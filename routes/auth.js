@@ -9,9 +9,7 @@ dotenv.config();
 const router = express.Router();
 
 // MailerSend setup
-const ms = new MailerSend({
-  api_key: process.env.MAILERSEND_API_KEY,
-});
+const ms = new MailerSend({ api_key: process.env.MAILERSEND_API_KEY });
 
 // Send verification email
 async function sendVerificationEmail(email, code) {
@@ -25,59 +23,61 @@ async function sendVerificationEmail(email, code) {
   await ms.send(emailParams);
 }
 
-// ----- GET Routes -----
-
+// --------- GET ROUTES ---------
 router.get("/signup", (req, res) => {
-  res.render("signup", { user: req.user || null });
+  res.render("signup");
 });
 
 router.get("/login", (req, res) => {
-  res.render("login", { user: req.user || null });
+  res.render("login");
 });
 
 router.get("/verify", (req, res) => {
-  // Optionally, pass email query param if coming from signup
-  const email = req.query.email || "";
-  res.render("verify", { email, user: req.user || null });
+  const email = req.query.email;
+  res.render("verify", { email });
 });
 
-// ----- POST Routes -----
-
-// Signup route
+// --------- POST ROUTES ---------
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password, role, terms } = req.body;
 
     if (!terms) return res.send("You must agree to terms and conditions");
 
+    // Check if user exists
     const existing = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
     if (existing.rows.length > 0) return res.send("User already exists");
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Insert user
     const newUser = await pool.query(
-      "INSERT INTO users (name, email, password, role, verified) VALUES ($1, $2, $3, $4, false) RETURNING id",
+      "INSERT INTO users (name, email, password, role, verified) VALUES ($1,$2,$3,$4,false) RETURNING id",
       [name, email, hashedPassword, role]
     );
 
+    // Generate verification code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 
+    // Save verification code
     await pool.query(
-      "INSERT INTO email_verifications (user_id, code, expires_at) VALUES ($1, $2, $3)",
+      "INSERT INTO email_verifications (user_id, code, expires_at) VALUES ($1,$2,$3)",
       [newUser.rows[0].id, code, expires]
     );
 
+    // Send email
     await sendVerificationEmail(email, code);
 
-    res.send(`Signup successful! Check your email for verification code.`);
+    // Redirect to verify page
+    res.redirect(`/verify?email=${email}`);
   } catch (err) {
     console.error(err);
     res.send("Error creating user");
   }
 });
 
-// Verify route
 router.post("/verify", async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -94,8 +94,10 @@ router.post("/verify", async (req, res) => {
 
     if (codeRes.rows.length === 0) return res.send("Invalid or expired code");
 
+    // Mark user as verified
     await pool.query("UPDATE users SET verified=true WHERE id=$1", [userId]);
 
+    // Delete verification code
     await pool.query("DELETE FROM email_verifications WHERE user_id=$1", [userId]);
 
     res.send("Email verified! You can now log in.");
@@ -105,7 +107,6 @@ router.post("/verify", async (req, res) => {
   }
 });
 
-// Login route
 router.post("/login", async (req, res) => {
   try {
     const { email, password, remember } = req.body;
@@ -124,11 +125,10 @@ router.post("/login", async (req, res) => {
       expiresIn: remember ? "7d" : "1h",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: remember ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000,
-    });
+    // Set cookie
+    res.cookie("token", token, { httpOnly: true, maxAge: remember ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000 });
 
+    // Redirect based on role
     if (user.role === "organization") res.redirect("/org-dashboard");
     else res.redirect("/user-dashboard");
   } catch (err) {
