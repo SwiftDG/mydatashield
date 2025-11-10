@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+
+<h2>Sign Up</h2>
+<form action="/signup" method="POST">
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input type="text" name="name" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Email</label>
+    <input type="email" name="email" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Password</label>
+    <input type="password" name="password" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Role</label><br>
+    <input type="radio" name="role" value="citizen" required> Citizen
+    <input type="radio" name="role" value="organization"> Organization
+  </div>
+
+  <div class="mb-3 form-check">
+    <input type="checkbox" name="terms" class="form-check-input" required>
+    <label class="form-check-label">I agree to the <a href="#">Terms & Conditions</a></label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Sign Up</button>
+</form>
+
+<%- include('partials/footer') %>
