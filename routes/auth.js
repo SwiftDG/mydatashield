@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import pool from "../config/db.js";
+import pool from "../config/db.js";                        
 import dotenv from "dotenv";
 import { MailerSend, EmailParams, Recipient } from "mailersend";
 
@@ -11,7 +11,7 @@ const router = express.Router();
 // MailerSend setup
 const ms = new MailerSend({ api_key: process.env.MAILERSEND_API_KEY });
 
-// Send verification email
+// Helper: Send verification email
 async function sendVerificationEmail(email, code) {
   const recipients = [new Recipient(email)];
   const emailParams = new EmailParams()
@@ -23,7 +23,11 @@ async function sendVerificationEmail(email, code) {
   await ms.send(emailParams);
 }
 
-// --------- GET ROUTES ---------
+/* =========================
+   GET ROUTES
+========================= */
+
+// Landing pages
 router.get("/signup", (req, res) => {
   res.render("signup");
 });
@@ -33,29 +37,39 @@ router.get("/login", (req, res) => {
 });
 
 router.get("/verify", (req, res) => {
-  const email = req.query.email;
-  res.render("verify", { email });
+  res.render("verify", { email: "" }); // will populate email via query or session
 });
 
-// --------- POST ROUTES ---------
+router.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.redirect("/");
+});
+
+/* =========================
+   POST ROUTES
+========================= */
+
+// SIGNUP
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password, role, terms } = req.body;
 
-    if (!terms) return res.send("You must agree to terms and conditions");
+    if (!terms) return res.status(400).send("You must agree to terms and conditions");
 
-    // Check if user exists
+    // Check if user already exists
     const existing = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
-    if (existing.rows.length > 0) return res.send("User already exists");
+    if (existing.rows.length > 0) return res.status(400).send("User already exists");
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user
     const newUser = await pool.query(
-      "INSERT INTO users (name, email, password, role, verified) VALUES ($1,$2,$3,$4,false) RETURNING id",
+      "INSERT INTO users (name, email, password, role, verified) VALUES ($1, $2, $3, $4, false) RETURNING id",
       [name, email, hashedPassword, role]
     );
+
+    const userId = newUser.rows[0].id;
 
     // Generate verification code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -63,27 +77,32 @@ router.post("/signup", async (req, res) => {
 
     // Save verification code
     await pool.query(
-      "INSERT INTO email_verifications (user_id, code, expires_at) VALUES ($1,$2,$3)",
-      [newUser.rows[0].id, code, expires]
+      "INSERT INTO email_verifications (user_id, code, expires_at) VALUES ($1, $2, $3)",
+      [userId, code, expires]
     );
 
-    // Send email
-    await sendVerificationEmail(email, code);
+    try {
+      // Send verification email
+      await sendVerificationEmail(email, code);
+    } catch (mailErr) {
+      console.error("MailerSend error:", mailErr);
+      return res.status(500).send("User created but failed to send verification email. Check logs.");
+    }
 
-    // Redirect to verify page
-    res.redirect(`/verify?email=${email}`);
+    res.status(201).send("Signup successful! Check your email for verification code.");
   } catch (err) {
-    console.error(err);
-    res.send("Error creating user");
+    console.error("Signup error:", err);
+    res.status(500).send("Error creating user: " + (err.message || err));
   }
 });
 
+// VERIFY EMAIL
 router.post("/verify", async (req, res) => {
   try {
     const { email, code } = req.body;
 
     const userRes = await pool.query("SELECT id FROM users WHERE email=$1", [email]);
-    if (userRes.rows.length === 0) return res.send("User not found");
+    if (userRes.rows.length === 0) return res.status(404).send("User not found");
 
     const userId = userRes.rows[0].id;
 
@@ -92,34 +111,35 @@ router.post("/verify", async (req, res) => {
       [userId, code]
     );
 
-    if (codeRes.rows.length === 0) return res.send("Invalid or expired code");
+    if (codeRes.rows.length === 0) return res.status(400).send("Invalid or expired code");
 
     // Mark user as verified
     await pool.query("UPDATE users SET verified=true WHERE id=$1", [userId]);
 
-    // Delete verification code
+    // Optionally delete the verification code
     await pool.query("DELETE FROM email_verifications WHERE user_id=$1", [userId]);
 
     res.send("Email verified! You can now log in.");
   } catch (err) {
-    console.error(err);
-    res.send("Error verifying email");
+    console.error("Verify error:", err);
+    res.status(500).send("Error verifying email: " + (err.message || err));
   }
 });
 
+// LOGIN
 router.post("/login", async (req, res) => {
   try {
     const { email, password, remember } = req.body;
 
     const userRes = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
-    if (userRes.rows.length === 0) return res.send("User not found");
+    if (userRes.rows.length === 0) return res.status(404).send("User not found");
 
     const user = userRes.rows[0];
 
-    if (!user.verified) return res.send("Please verify your email first");
+    if (!user.verified) return res.status(403).send("Please verify your email first");
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.send("Incorrect password");
+    if (!match) return res.status(401).send("Incorrect password");
 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: remember ? "7d" : "1h",
@@ -132,8 +152,8 @@ router.post("/login", async (req, res) => {
     if (user.role === "organization") res.redirect("/org-dashboard");
     else res.redirect("/user-dashboard");
   } catch (err) {
-    console.error(err);
-    res.send("Error logging in");
+    console.error("Login error:", err);
+    res.status(500).send("Error logging in: " + (err.message || err));
   }
 });
 
