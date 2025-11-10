@@ -27,9 +27,15 @@ app.use(
 );
 app.use(express.static('public'));
 
+// Simple middleware to attach user info to all views
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
+
 // View engine
 app.set('view engine', 'ejs');
-app.set('views', path.join('views')); // simple relative path
+app.set('views', path.join('views')); // relative path
 
 // Routes
 app.use('/', authRoutes);
