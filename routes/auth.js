@@ -1,45 +1,49 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import pool from "../config/db.js";                        
+import pool from "../config/db.js";
 import dotenv from "dotenv";
-import { MailerSend, EmailParams, Recipient } from "mailersend";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 const router = express.Router();
 
-// MailerSend setup
-const ms = new MailerSend({ api_key: process.env.MAILERSEND_API_KEY });
+// Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,       // your Gmail
+    pass: process.env.GMAIL_APP_PASS,   // app password
+  },
+});
 
 // Helper: Send verification email
 async function sendVerificationEmail(email, code) {
-  const recipients = [new Recipient(email)];
-  const emailParams = new EmailParams()
-    .setFrom(process.env.MAILERSEND_FROM_EMAIL, process.env.MAILERSEND_FROM_NAME)
-    .setRecipients(recipients)
-    .setSubject("MyDataShield Verification Code")
-    .setHtml(`<p>Your verification code is: <strong>${code}</strong></p>`);
+  const mailOptions = {
+    from: `"MyDataShield" <${process.env.GMAIL_USER}>`,
+    to: email,
+    subject: "MyDataShield Verification Code",
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; text-align:center;">
+        <img src="https://raw.githubusercontent.com/SwiftDG/mydatashield/e19bbd45d2dab8f04d835244c0c0269637ca923c/AQPdVsCAiziCkGNrvMqvYBgAzQuvOTqSWcYtM2bMlILVipKnlI4GQiEydyoPioVv0HKt2M5-Tr5Ir8s-VvTbgQsVdbe_Q1Dn1zDcRGjhEEG8YcEtVRv_6fjxeI7oDUOgRorwZ_ofVY4g2Aet7vqwr-YECaSJ.jpeg" alt="MyDataShield Logo" style="width:100px; height:auto; margin-bottom:20px;" />
+        <h2>Verify Your Email</h2>
+        <p>Your verification code is:</p>
+        <h1 style="color:#2e86de;">${code}</h1>
+        <p>This code will expire in 10 minutes.</p>
+      </div>
+    `,
+  };
 
-  await ms.send(emailParams);
+  await transporter.sendMail(mailOptions);
 }
 
 /* =========================
    GET ROUTES
 ========================= */
 
-// Landing pages
-router.get("/signup", (req, res) => {
-  res.render("signup");
-});
-
-router.get("/login", (req, res) => {
-  res.render("login");
-});
-
-router.get("/verify", (req, res) => {
-  res.render("verify", { email: "" }); // will populate email via query or session
-});
-
+router.get("/signup", (req, res) => res.render("signup"));
+router.get("/login", (req, res) => res.render("login"));
+router.get("/verify", (req, res) => res.render("verify", { email: "" }));
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.redirect("/");
@@ -53,39 +57,32 @@ router.get("/logout", (req, res) => {
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password, role, terms } = req.body;
+    if (!terms) return res.status(400).send("You must agree to terms");
 
-    if (!terms) return res.status(400).send("You must agree to terms and conditions");
-
-    // Check if user already exists
     const existing = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
     if (existing.rows.length > 0) return res.status(400).send("User already exists");
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert user
     const newUser = await pool.query(
       "INSERT INTO users (name, email, password, role, verified) VALUES ($1, $2, $3, $4, false) RETURNING id",
       [name, email, hashedPassword, role]
     );
-
     const userId = newUser.rows[0].id;
 
     // Generate verification code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 
-    // Save verification code
     await pool.query(
       "INSERT INTO email_verifications (user_id, code, expires_at) VALUES ($1, $2, $3)",
       [userId, code, expires]
     );
 
     try {
-      // Send verification email
       await sendVerificationEmail(email, code);
     } catch (mailErr) {
-      console.error("MailerSend error:", mailErr);
+      console.error("Nodemailer error:", mailErr);
       return res.status(500).send("User created but failed to send verification email. Check logs.");
     }
 
@@ -110,13 +107,9 @@ router.post("/verify", async (req, res) => {
       "SELECT * FROM email_verifications WHERE user_id=$1 AND code=$2 AND expires_at > NOW()",
       [userId, code]
     );
-
     if (codeRes.rows.length === 0) return res.status(400).send("Invalid or expired code");
 
-    // Mark user as verified
     await pool.query("UPDATE users SET verified=true WHERE id=$1", [userId]);
-
-    // Optionally delete the verification code
     await pool.query("DELETE FROM email_verifications WHERE user_id=$1", [userId]);
 
     res.send("Email verified! You can now log in.");
@@ -135,7 +128,6 @@ router.post("/login", async (req, res) => {
     if (userRes.rows.length === 0) return res.status(404).send("User not found");
 
     const user = userRes.rows[0];
-
     if (!user.verified) return res.status(403).send("Please verify your email first");
 
     const match = await bcrypt.compare(password, user.password);
@@ -145,10 +137,8 @@ router.post("/login", async (req, res) => {
       expiresIn: remember ? "7d" : "1h",
     });
 
-    // Set cookie
     res.cookie("token", token, { httpOnly: true, maxAge: remember ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000 });
 
-    // Redirect based on role
     if (user.role === "organization") res.redirect("/org-dashboard");
     else res.redirect("/user-dashboard");
   } catch (err) {
