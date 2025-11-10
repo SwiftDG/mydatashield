@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<h2>Organization Dashboard</h2>
+
+<h4>Users & Consent Status</h4>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Consent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% users.forEach(u => { %>
+      <tr>
+        <td><%= u.name %></td>
+        <td><%= u.email %></td>
+        <td><%= u.consent_given ? 'Yes' : 'No' %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<h4>Upload NDPR Scan</h4>
+<form action="/upload-scan" method="POST" enctype="multipart/form-data">
+  <input type="file" name="scanFile" required>
+  <button class="btn btn-primary">Upload</button>
+</form>
+
+<%- include('partials/footer') %>
