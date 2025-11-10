@@ -1,15 +1,125 @@
 <%- include('partials/header') %>
 
-<h2>Email Verification</h2>
-<p>We sent a verification code to <strong><%= email %></strong>. Enter it below:</p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center">Verify Your Email</h2>
+          
+          <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger" role="alert">
+              <%= error %>
+            </div>
+          <% } %>
 
-<form action="/verify" method="POST">
-  <input type="hidden" name="email" value="<%= email %>">
-  <div class="mb-3">
-    <label class="form-label">Verification Code</label>
-    <input type="text" name="code" class="form-control" required>
+          <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success" role="alert">
+              <%= success %>
+            </div>
+          <% } %>
+
+          <p class="text-center">
+            We sent a verification code to: <strong><%= email %></strong>
+          </p>
+          <p class="text-muted text-center small">
+            Check your inbox and enter the 6-digit code below. It will expire in 10 minutes.
+          </p>
+
+          <form action="/verify" method="POST">
+            <input type="hidden" name="email" value="<%= email %>">
+            
+            <div class="mb-3">
+              <label for="code" class="form-label">Verification Code</label>
+              <input 
+                type="text" 
+                class="form-control form-control-lg text-center" 
+                id="code" 
+                name="code" 
+                placeholder="Enter 6-digit code" 
+                maxlength="6"
+                pattern="[0-9]{6}"
+                required
+              >
+              <div class="form-text">Enter the 6-digit code from your email</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 btn-lg">
+              Verify Email
+            </button>
+          </form>
+
+          <div class="text-center mt-3">
+            <p class="mb-2">Didn't receive the code?</p>
+            <button type="button" class="btn btn-outline-secondary" onclick="resendCode()" id="resendBtn">
+              Resend Verification Code
+            </button>
+            <div id="countdown" class="text-muted small mt-2" style="display: none;">
+              Resend available in <span id="timer">60</span> seconds
+            </div>
+          </div>
+
+          <div class="text-center mt-3">
+            <a href="/login" class="btn btn-link">Back to Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <button type="submit" class="btn btn-primary">Verify</button>
-</form>
+</div>
+
+<script>
+let countdown = 60;
+let timerInterval;
+
+function startCountdown() {
+  const resendBtn = document.getElementById('resendBtn');
+  const countdownEl = document.getElementById('countdown');
+  const timerEl = document.getElementById('timer');
+  
+  resendBtn.disabled = true;
+  countdownEl.style.display = 'block';
+  
+  timerInterval = setInterval(() => {
+    countdown--;
+    timerEl.textContent = countdown;
+    
+    if (countdown <= 0) {
+      clearInterval(timerInterval);
+      resendBtn.disabled = false;
+      countdownEl.style.display = 'none';
+      countdown = 60;
+    }
+  }, 1000);
+}
+
+function resendCode() {
+  const email = '<%= email %>';
+  
+  fetch('/resend-verification', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email: email })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Verification code resent! Check your email.');
+      startCountdown();
+    } else {
+      alert('Error: ' + data.error);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to resend verification code');
+  });
+}
+
+// Start countdown on page load if needed
+// startCountdown();
+</script>
 
 <%- include('partials/footer') %>
