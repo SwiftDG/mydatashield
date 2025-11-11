@@ -4,6 +4,8 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 
 // Import Routes
 import authRoutes from './routes/auth.js';
@@ -20,6 +22,7 @@ const __dirname = path.dirname(__filename);
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-for-dev',
@@ -29,8 +32,29 @@ app.use(
   })
 );
 
+// JWT middleware to set req.user from token
+app.use((req, res, next) => {
+  const token = req.cookies.token;
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback-jwt-secret");
+      req.user = decoded;
+    } catch (err) {
+      // Token is invalid, clear it
+      res.clearCookie('token');
+    }
+  }
+  next();
+});
+
 // Static files
 app.use(express.static('public'));
+
+// Middleware to attach user info to all views
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
 
 // View engine
 app.set('view engine', 'ejs');
