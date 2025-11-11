@@ -38,6 +38,12 @@
     
     <!-- Custom Scripts -->
     <script>
+// Initialize AOS animations
+    AOS.init({
+        duration: 800,
+        once: true, // Animate only once when scrolling
+        offset: 100
+    });
         // Simple animation for feature cards
         document.addEventListener('DOMContentLoaded', function() {
             const featureCards = document.querySelectorAll('.feature-card');
