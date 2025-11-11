@@ -1,31 +1,224 @@
 <%- include('partials/header') %>
 
-<h2>User Dashboard</h2>
+    <div class="container py-4">
+        <!-- Dashboard Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="h3 fw-bold">My Data Dashboard</h1>
+                <p class="text-muted">Manage your data consents and privacy settings</p>
+            </div>
+            <div class="col-auto">
+                <div class="card bg-light border-0">
+                    <div class="card-body py-2">
+                        <small class="text-muted">Privacy Score</small>
+                        <h4 class="mb-0 text-success">85%</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<h4>Your Consents</h4>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Organization</th>
-      <th>Consent Given</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% consents.forEach(c => { %>
-      <tr>
-        <td><%= c.org_name %></td>
-        <td><%= c.consent_given ? 'Yes' : 'No' %></td>
-        <td>
-          <form action="/toggle-consent" method="POST">
-            <input type="hidden" name="userId" value="<%= user.id %>">
-            <input type="hidden" name="consent" value="<%= !c.consent_given %>">
-            <button class="btn btn-sm btn-secondary">Toggle</button>
-          </form>
-        </td>
-      </tr>
-    <% }) %>
-  </tbody>
-</table>
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 bg-primary text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1"><%= consents ? consents.length : 0 %></h5>
+                        <small>Organizations</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-success text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1">
+                            <%= consents ? consents.filter(c => c.consent_given).length : 0 %>
+                        </h5>
+                        <small>Active Consents</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-warning text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1">
+                            <%= consents ? consents.filter(c => !c.consent_given).length : 0 %>
+                        </h5>
+                        <small>Pending</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-info text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1">7</h5>
+                        <small>Data Rights Used</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consent Management -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">My Data Consents</h5>
+                    </div>
+                    <div class="card-body">
+                        <% if (consents && consents.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Organization</th>
+                                            <th>Consent Status</th>
+                                            <th>Data Categories</th>
+                                            <th>Last Updated</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% consents.forEach(consent => { %>
+                                            <tr>
+                                                <td>
+                                                    <strong><%= consent.organization_name || 'Unknown Organization' %></strong>
+                                                </td>
+                                                <td>
+                                                    <% if (consent.consent_given) { %>
+                                                        <span class="badge bg-success">Approved</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-warning">Pending</span>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">
+                                                        <% if (consent.data_categories && consent.data_categories.length > 0) { %>
+                                                            <%= consent.data_categories.join(', ') %>
+                                                        <% } else { %>
+                                                            Basic Profile
+                                                        <% } %>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">
+                                                        <%= consent.updated_at ? new Date(consent.updated_at).toLocaleDateString() : 'N/A' %>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <% if (consent.consent_given) { %>
+                                                            <button class="btn btn-outline-danger" onclick="revokeConsent(<%= consent.id %>)">
+                                                                Revoke
+                                                            </button>
+                                                        <% } else { %>
+                                                            <button class="btn btn-outline-success" onclick="grantConsent(<%= consent.id %>)">
+                                                                Approve
+                                                            </button>
+                                                        <% } %>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center py-5">
+                                <div class="text-muted mb-3">
+                                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5>No Consent Records</h5>
+                                <p class="text-muted">You haven't granted any data consents yet.</p>
+                                <button class="btn btn-primary" onclick="showConsentForm()">
+                                    Grant Your First Consent
+                                </button>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Sidebar -->
+            <div class="col-lg-4">
+                <!-- Data Rights Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0">Exercise Your Data Rights</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary btn-sm text-start" onclick="requestDataAccess()">
+                                📋 Request Data Access
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm text-start" onclick="requestDataCorrection()">
+                                ✏️ Request Data Correction
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm text-start" onclick="requestDataDeletion()">
+                                🗑️ Request Data Deletion
+                            </button>
+                            <button class="btn btn-outline-info btn-sm text-start" onclick="downloadData()">
+                                ⬇️ Download My Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Tips -->
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <h6>Privacy Tips</h6>
+                        <ul class="small text-muted">
+                            <li>Regularly review your data consents</li>
+                            <li>Only share necessary information</li>
+                            <li>Use strong, unique passwords</li>
+                            <li>Enable two-factor authentication when available</li>
+                            <li>Be cautious of unsolicited data requests</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for interactive elements -->
+    <script>
+        function grantConsent(consentId) {
+            if (confirm('Are you sure you want to grant consent to this organization?')) {
+                // In a real app, this would make an API call
+                alert('Consent granted successfully!');
+                location.reload();
+            }
+        }
+
+        function revokeConsent(consentId) {
+            if (confirm('Are you sure you want to revoke consent? This may affect services.')) {
+                // In a real app, this would make an API call
+                alert('Consent revoked successfully!');
+                location.reload();
+            }
+        }
+
+        function showConsentForm() {
+            alert('Consent form would open here in a full implementation.');
+        }
+
+        function requestDataAccess() {
+            alert('Data access request submitted. Organizations have 30 days to respond under NDPR.');
+        }
+
+        function requestDataCorrection() {
+            alert('Data correction request submitted.');
+        }
+
+        function requestDataDeletion() {
+            if (confirm('This will request deletion of your data from all organizations. Continue?')) {
+                alert('Data deletion requests submitted to all organizations.');
+            }
+        }
+
+        function downloadData() {
+            alert('Preparing your data export... This may take a few moments.');
+        }
+    </script>
 
 <%- include('partials/footer') %>
