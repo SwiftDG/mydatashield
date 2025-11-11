@@ -1,31 +1,324 @@
 <%- include('partials/header') %>
 
-<h2>Organization Dashboard</h2>
+    <div class="container py-4">
+        <!-- Dashboard Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="h3 fw-bold">Organization Dashboard</h1>
+                <p class="text-muted">Manage compliance scans and user data consents</p>
+            </div>
+            <div class="col-auto">
+                <div class="card bg-primary text-white border-0">
+                    <div class="card-body py-2">
+                        <small class="text-white-50">Compliance Score</small>
+                        <h4 class="mb-0">78%</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<h4>Users & Consent Status</h4>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Consent</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% users.forEach(u => { %>
-      <tr>
-        <td><%= u.name %></td>
-        <td><%= u.email %></td>
-        <td><%= u.consent_given ? 'Yes' : 'No' %></td>
-      </tr>
-    <% }) %>
-  </tbody>
-</table>
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 bg-success text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1"><%= userConsents ? userConsents.length : 0 %></h5>
+                        <small>Total Users</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-info text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1">
+                            <%= userConsents ? userConsents.filter(uc => uc.consent_given).length : 0 %>
+                        </h5>
+                        <small>Consented Users</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-warning text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1"><%= scans ? scans.length : 0 %></h5>
+                        <small>Scans Completed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-secondary text-white">
+                    <div class="card-body text-center py-3">
+                        <h5 class="mb-1">
+                            <%= scans ? scans.filter(s => s.status === 'completed').length : 0 %>
+                        </h5>
+                        <small>Successful Scans</small>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<h4>Upload NDPR Scan</h4>
-<form action="/upload-scan" method="POST" enctype="multipart/form-data">
-  <input type="file" name="scanFile" required>
-  <button class="btn btn-primary">Upload</button>
-</form>
+        <div class="row">
+            <!-- Left Column: Scans and Upload -->
+            <div class="col-lg-8">
+                <!-- Document Scan Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">NDPR Compliance Scanner</h5>
+                        <span class="badge bg-success">Live</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            Upload your documents to check NDPR compliance. We'll analyze privacy policies, 
+                            terms of service, and data handling procedures.
+                        </p>
+                        
+                        <!-- Upload Form -->
+                        <form action="/upload-scan" method="POST" enctype="multipart/form-data" id="uploadForm">
+                            <div class="mb-3">
+                                <label for="scanName" class="form-label">Scan Name</label>
+                                <input type="text" class="form-control" id="scanName" name="scanName" 
+                                       placeholder="e.g., Privacy Policy Review" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="scanFile" class="form-label">Upload Document</label>
+                                <input type="file" class="form-control" id="scanFile" name="scanFile" 
+                                       accept=".pdf,.doc,.docx,.txt" required>
+                                <div class="form-text">
+                                    Supported formats: PDF, Word documents, Text files
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 py-2" id="scanButton">
+                                <span id="scanButtonText">Start Compliance Scan</span>
+                                <div id="scanSpinner" class="spinner-border spinner-border-sm d-none" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Recent Scans -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Recent Compliance Scans</h5>
+                    </div>
+                    <div class="card-body">
+                        <% if (scans && scans.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Scan Name</th>
+                                            <th>Date</th>
+                                            <th>Score</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% scans.forEach(scan => { %>
+                                            <tr>
+                                                <td>
+                                                    <strong><%= scan.scan_name %></strong>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">
+                                                        <%= new Date(scan.uploaded_at).toLocaleDateString() %>
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                                            <div class="progress-bar 
+                                                                <%= scan.compliance_score >= 80 ? 'bg-success' : 
+                                                                    scan.compliance_score >= 60 ? 'bg-warning' : 'bg-danger' %>" 
+                                                                style="width: <%= scan.compliance_score %>%">
+                                                            </div>
+                                                        </div>
+                                                        <span class="fw-bold"><%= scan.compliance_score %>%</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <% if (scan.status === 'completed') { %>
+                                                        <span class="badge bg-success">Completed</span>
+                                                    <% } else if (scan.status === 'processing') { %>
+                                                        <span class="badge bg-warning">Processing</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-secondary"><%= scan.status %></span>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-outline-primary btn-sm" 
+                                                            onclick="viewScanDetails(<%= scan.id %>)">
+                                                        View Report
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center py-5">
+                                <div class="text-muted mb-3">
+                                    <i class="bi bi-file-earmark-text" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5>No Scans Yet</h5>
+                                <p class="text-muted">Upload your first document to start your NDPR compliance check.</p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: User Consents and Actions -->
+            <div class="col-lg-4">
+                <!-- User Consents Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0">User Consent Overview</h6>
+                    </div>
+                    <div class="card-body">
+                        <% if (userConsents && userConsents.length > 0) { %>
+                            <div class="list-group list-group-flush">
+                                <% userConsents.forEach(consent => { %>
+                                    <div class="list-group-item px-0">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-1"><%= consent.name %></h6>
+                                                <small class="text-muted"><%= consent.email %></small>
+                                            </div>
+                                            <div>
+                                                <% if (consent.consent_given) { %>
+                                                    <span class="badge bg-success">Approved</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-warning">Pending</span>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <% if (consent.data_categories && consent.data_categories.length > 0) { %>
+                                            <small class="text-muted">
+                                                Data: <%= consent.data_categories.join(', ') %>
+                                            </small>
+                                        <% } %>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center py-3">
+                                <small class="text-muted">No user consents yet</small>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <h6>Quick Actions</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary btn-sm text-start" onclick="generateReport()">
+                                📊 Generate Compliance Report
+                            </button>
+                            <button class="btn btn-outline-success btn-sm text-start" onclick="viewComplianceTips()">
+                                💡 View NDPR Tips
+                            </button>
+                            <button class="btn btn-outline-info btn-sm text-start" onclick="downloadTemplate()">
+                                📥 Download Policy Template
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm text-start" onclick="scheduleAudit()">
+                                📅 Schedule Compliance Audit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NDPR Compliance Status -->
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-header bg-white">
+                        <h6 class="mb-0">NDPR Checklist</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="check1" checked>
+                            <label class="form-check-label small" for="check1">
+                                Privacy Policy Published
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="check2" checked>
+                            <label class="form-check-label small" for="check2">
+                                Data Protection Officer Appointed
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="check3">
+                            <label class="form-check-label small" for="check3">
+                                Data Breach Response Plan
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="check4">
+                            <label class="form-check-label small" for="check4">
+                                User Consent Management
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check5">
+                            <label class="form-check-label small" for="check5">
+                                Data Processing Records
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for interactive elements -->
+    <script>
+        // Handle form submission with loading state
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const button = document.getElementById('scanButton');
+            const buttonText = document.getElementById('scanButtonText');
+            const spinner = document.getElementById('scanSpinner');
+            
+            button.disabled = true;
+            buttonText.textContent = 'Scanning Document...';
+            spinner.classList.remove('d-none');
+        });
+
+        function viewScanDetails(scanId) {
+            alert(`Scan #${scanId} details would open here with full compliance report.`);
+        }
+
+        function generateReport() {
+            alert('Generating comprehensive NDPR compliance report...');
+        }
+
+        function viewComplianceTips() {
+            alert('Opening NDPR compliance best practices guide...');
+        }
+
+        function downloadTemplate() {
+            alert('Downloading NDPR-compliant privacy policy template...');
+        }
+
+        function scheduleAudit() {
+            alert('Opening audit scheduling calendar...');
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const complianceScore = document.querySelector('.card.bg-primary h4');
+            if (complianceScore && Math.random() > 0.7) {
+                const currentScore = parseInt(complianceScore.textContent);
+                const newScore = Math.min(100, currentScore + Math.floor(Math.random() * 3));
+                complianceScore.textContent = newScore + '%';
+            }
+        }, 5000);
+    </script>
 
 <%- include('partials/footer') %>
