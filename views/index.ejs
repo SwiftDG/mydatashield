@@ -1,10 +1,103 @@
 <%- include('partials/header') %>
 
-<div class="text-center mt-5">
-  <h1>Welcome to MyDataShield</h1>
-  <p>Manage your data consent and compliance easily.</p>
-  <a href="/signup" class="btn btn-primary me-2">Sign Up</a>
-  <a href="/login" class="btn btn-secondary">Login</a>
-</div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">NDPR Compliance Made Simple</h1>
+                    <p class="lead mb-4">
+                        MyDataShield helps Nigerian SMEs automatically check their compliance with 
+                        Nigeria's Data Protection Regulation. Scan your documents and get instant 
+                        compliance scores and recommendations.
+                    </p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="/signup" class="btn btn-light btn-lg px-4">Get Started Free</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="p-4">
+                        <div class="bg-white rounded-3 p-4 shadow">
+                            <h5 class="text-dark mb-3">Sample Compliance Score</h5>
+                            <div class="progress mb-2" style="height: 25px;">
+                                <div class="progress-bar bg-success" style="width: 78%">78% Compliant</div>
+                            </div>
+                            <small class="text-muted">Based on document analysis</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">How MyDataShield Works</h2>
+                <p class="text-muted">Three simple steps to NDPR compliance</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <span class="text-white fw-bold fs-2">1</span>
+                            </div>
+                            <h5 class="card-title">Upload Documents</h5>
+                            <p class="card-text text-muted">
+                                Upload your privacy policies, terms of service, and data handling procedures for analysis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <span class="text-white fw-bold fs-2">2</span>
+                            </div>
+                            <h5 class="card-title">Automated Analysis</h5>
+                            <p class="card-text text-muted">
+                                Our system scans for NDPR compliance requirements and identifies gaps in your data protection practices.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <span class="text-white fw-bold fs-2">3</span>
+                            </div>
+                            <h5 class="card-title">Get Recommendations</h5>
+                            <p class="card-text text-muted">
+                                Receive actionable recommendations to improve your compliance score and protect user data.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h3 class="fw-bold mb-3">Ready to Ensure NDPR Compliance?</h3>
+                    <p class="text-muted mb-4">
+                        Join hundreds of Nigerian businesses protecting their customers' data and building trust.
+                    </p>
+                    <a href="/signup" class="btn btn-primary btn-lg px-5">Start Your Free Scan</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
 <%- include('partials/footer') %>
