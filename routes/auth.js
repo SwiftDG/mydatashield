@@ -63,12 +63,12 @@ router.post("/signup", async (req, res) => {
 
     // Auto-login after signup
     const token = jwt.sign({ id: userId, role: userRole }, process.env.JWT_SECRET || "fallback-jwt-secret", {
-      expiresIn: "7d",
+      expiresIn: "365d",
     });
 
     res.cookie("token", token, { 
       httpOnly: true, 
-      maxAge: 7 * 24 * 60 * 60 * 1000 
+      maxAge: 365 * 24 * 60 * 60 * 1000 
     });
 
     // Redirect to appropriate dashboard
@@ -108,12 +108,12 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET || "fallback-jwt-secret", {
-      expiresIn: "7d",
+      expiresIn: remember ? "365d" : "1h",
     });
 
     res.cookie("token", token, { 
       httpOnly: true, 
-      maxAge: 7 * 24 * 60 * 60 * 1000 
+      maxAge: remember ? 365 * 24 * 60 * 60 * 1000:  60 * 60 * 1000
     });
 
     if (user.role === "organization") {
