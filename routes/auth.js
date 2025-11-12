@@ -89,7 +89,7 @@ router.post("/signup", async (req, res) => {
 // LOGIN
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, remember } = req.body;
 
     const userRes = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
     if (userRes.rows.length === 0) {
@@ -113,7 +113,7 @@ router.post("/login", async (req, res) => {
 
     res.cookie("token", token, { 
       httpOnly: true, 
-      maxAge: remember ? 365 * 24 * 60 * 60 * 1000:  60 * 60 * 1000
+      maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000
     });
 
     if (user.role === "organization") {
@@ -126,6 +126,69 @@ router.post("/login", async (req, res) => {
     res.status(500).render("login", { 
       error: "Error logging in" 
     });
+  }
+});
+
+// ==================== CONSENT MANAGEMENT ROUTES ====================
+
+// Grant consent to organization
+router.post("/grant-consent", async (req, res) => {
+  try {
+    const { organization_id } = req.body;
+    const user_id = req.user.id;
+
+    // Upsert consent record
+    await pool.query(
+      `INSERT INTO consents (user_id, organization_id, consent_given, data_categories) 
+       VALUES ($1, $2, true, ARRAY['profile', 'contact', 'preferences']::text[])
+       ON CONFLICT (user_id, organization_id) 
+       DO UPDATE SET consent_given = true, updated_at = NOW()`,
+      [user_id, organization_id]
+    );
+
+    res.json({ success: true, message: "Consent granted successfully" });
+  } catch (err) {
+    console.error("Grant consent error:", err);
+    res.status(500).json({ success: false, error: "Failed to grant consent" });
+  }
+});
+
+// Revoke consent from organization
+router.post("/revoke-consent", async (req, res) => {
+  try {
+    const { organization_id } = req.body;
+    const user_id = req.user.id;
+
+    await pool.query(
+      "UPDATE consents SET consent_given = false, updated_at = NOW() WHERE user_id = $1 AND organization_id = $2",
+      [user_id, organization_id]
+    );
+
+    res.json({ success: true, message: "Consent revoked successfully" });
+  } catch (err) {
+    console.error("Revoke consent error:", err);
+    res.status(500).json({ success: false, error: "Failed to revoke consent" });
+  }
+});
+
+// Create new consent request
+router.post("/request-consent", async (req, res) => {
+  try {
+    const { organization_id } = req.body;
+    const user_id = req.user.id;
+
+    await pool.query(
+      `INSERT INTO consents (user_id, organization_id, consent_given, data_categories) 
+       VALUES ($1, $2, false, ARRAY['profile']::text[])
+       ON CONFLICT (user_id, organization_id) 
+       DO UPDATE SET updated_at = NOW()`,
+      [user_id, organization_id]
+    );
+
+    res.json({ success: true, message: "Consent request created" });
+  } catch (err) {
+    console.error("Request consent error:", err);
+    res.status(500).json({ success: false, error: "Failed to create consent request" });
   }
 });
 
@@ -163,15 +226,23 @@ router.get("/user-dashboard", requireAuth, async (req, res) => {
       [req.user.id]
     );
 
+    // Get available organizations for new consent requests
+    const organizations = await pool.query(
+      "SELECT id, name FROM users WHERE role = 'organization' AND id != $1",
+      [req.user.id]
+    );
+
     res.render("user-dashboard", { 
       user: req.user,
-      consents: consents.rows 
+      consents: consents.rows,
+      organizations: organizations.rows
     });
   } catch (err) {
     console.error("Dashboard error:", err);
     res.render("user-dashboard", { 
       user: req.user,
-      consents: [] 
+      consents: [],
+      organizations: []
     });
   }
 });
@@ -190,7 +261,7 @@ router.get("/org-dashboard", requireAuth, async (req, res) => {
     );
 
     const userConsents = await pool.query(
-      `SELECT u.name, u.email, c.consent_given, c.data_categories 
+      `SELECT u.name, u.email, c.consent_given, c.data_categories, c.updated_at
        FROM consents c 
        JOIN users u ON c.user_id = u.id 
        WHERE c.organization_id = $1`,
