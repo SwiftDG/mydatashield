@@ -58,12 +58,20 @@ router.post("/signup", async (req, res) => {
     
     // Basic validation
     if (!name || !email || !password || !role) {
+      // API MODIFICATION: Check if it's an API request
+      if (req.headers['content-type'] === 'application/json') {
+        return res.status(400).json({ error: "All fields are required" });
+      }
       return res.render("signup", { 
         error: "All fields are required" 
       });
     }
     
     if (!terms) {
+      // API MODIFICATION: Check if it's an API request
+      if (req.headers['content-type'] === 'application/json') {
+        return res.status(400).json({ error: "You must agree to terms and conditions" });
+      }
       return res.render("signup", { 
         error: "You must agree to terms and conditions" 
       });
@@ -72,6 +80,10 @@ router.post("/signup", async (req, res) => {
     // Check if user exists
     const existing = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
     if (existing.rows.length > 0) {
+      // API MODIFICATION: Check if it's an API request
+      if (req.headers['content-type'] === 'application/json') {
+        return res.status(400).json({ error: "User already exists with this email" });
+      }
       return res.render("signup", { 
         error: "User already exists with this email" 
       });
@@ -94,6 +106,17 @@ router.post("/signup", async (req, res) => {
       expiresIn: "365d",
     });
 
+    // API MODIFICATION: Return JSON for API requests
+    if (req.headers['content-type'] === 'application/json') {
+      return res.json({ 
+        success: true, 
+        message: "User created successfully",
+        user: { id: userId, name, email, role: userRole },
+        token: token
+      });
+    }
+
+    // Original behavior for web requests
     res.cookie("token", token, { 
       httpOnly: true, 
       maxAge: 365 * 24 * 60 * 60 * 1000 
@@ -108,6 +131,10 @@ router.post("/signup", async (req, res) => {
     
   } catch (err) {
     console.error("SIGNUP ERROR:", err);
+    // API MODIFICATION: Check if it's an API request
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(500).json({ error: "Server error during signup: " + err.message });
+    }
     return res.render("signup", { 
       error: "Server error during signup: " + err.message 
     });
@@ -121,6 +148,10 @@ router.post("/login", async (req, res) => {
 
     const userRes = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
     if (userRes.rows.length === 0) {
+      // API MODIFICATION: Check if it's an API request
+      if (req.headers['content-type'] === 'application/json') {
+        return res.status(400).json({ error: "User not found" });
+      }
       return res.render("login", { 
         error: "User not found" 
       });
@@ -130,6 +161,10 @@ router.post("/login", async (req, res) => {
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
+      // API MODIFICATION: Check if it's an API request
+      if (req.headers['content-type'] === 'application/json') {
+        return res.status(400).json({ error: "Incorrect password" });
+      }
       return res.render("login", { 
         error: "Incorrect password" 
       });
@@ -139,6 +174,17 @@ router.post("/login", async (req, res) => {
       expiresIn: remember ? "365d" : "1h",
     });
 
+    // API MODIFICATION: Return JSON for API requests
+    if (req.headers['content-type'] === 'application/json') {
+      return res.json({ 
+        success: true, 
+        message: "Login successful",
+        user: { id: user.id, name: user.name, email: user.email, role: user.role },
+        token: token
+      });
+    }
+
+    // Original behavior for web requests
     res.cookie("token", token, { 
       httpOnly: true, 
       maxAge: remember ? 365 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000
@@ -151,6 +197,10 @@ router.post("/login", async (req, res) => {
     }
   } catch (err) {
     console.error("Login error:", err);
+    // API MODIFICATION: Check if it's an API request
+    if (req.headers['content-type'] === 'application/json') {
+      return res.status(500).json({ error: "Error logging in: " + err.message });
+    }
     res.status(500).render("login", { 
       error: "Error logging in" 
     });
