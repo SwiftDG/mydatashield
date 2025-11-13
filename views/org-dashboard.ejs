@@ -295,20 +295,81 @@
         }
 
         function generateReport() {
-            alert('Generating comprehensive NDPR compliance report...');
-        }
+    // Create and download a PDF report (simulated for now)
+    const reportData = {
+        organization: "<%= user.name %>",
+        date: new Date().toLocaleDateString(),
+        averageScore: "<%= complianceScore %>",
+        totalScans: "<%= scans ? scans.length : 0 %>",
+        totalUsers: "<%= totalUsers %>"
+    };
+    
+    // For now, show a detailed alert with report summary
+    alert(`Compliance Report Generated!\n\nOrganization: ${reportData.organization}\nDate: ${reportData.date}\nAverage Compliance Score: ${reportData.averageScore}%\nTotal Scans: ${reportData.totalScans}\nTotal Users: ${reportData.totalUsers}\n\n(Full PDF export would be implemented here)`);
+}
 
-        function viewComplianceTips() {
-            alert('Opening NDPR compliance best practices guide...');
-        }
+function viewComplianceTips() {
+    // Show actual NDPR tips in an alert (could be a modal in future)
+    const tips = ` NDPR COMPLIANCE TIPS:
 
-        function downloadTemplate() {
-            alert('Downloading NDPR-compliant privacy policy template...');
-        }
+1. Always obtain EXPLICIT consent before data collection
+2. Appoint a Data Protection Officer for organizations
+3. Implement data breach response procedures
+4. Conduct regular compliance audits
+5. Provide clear privacy policies to users
+6. Honor data subject rights within 30 days
+7. Maintain data processing records
+8. Use appropriate security measures for data protection
 
-        function scheduleAudit() {
-            alert('Opening audit scheduling calendar...');
-        }
+Learn more at: NDPR Official Guidelines`;
+    alert(tips);
+}
+
+function downloadTemplate() {
+    // Create and download a basic privacy policy template
+    const templateContent = `NDPR PRIVACY POLICY TEMPLATE
+    
+Organization: [Your Organization Name]
+Effective Date: [Date]
+
+1. DATA COLLECTION
+We collect the following personal data: [list data types]
+
+2. CONSENT MANAGEMENT  
+We obtain explicit consent before collecting personal data.
+
+3. DATA SECURITY
+We implement appropriate security measures to protect personal data.
+
+4. DATA SUBJECT RIGHTS
+Users can request access, correction, or deletion of their data.
+
+5. DATA BREACH PROCEDURES
+We have established procedures for handling data breaches.
+
+6. CONTACT INFORMATION
+Data Protection Officer: [DPO Contact Details]
+
+-- This template follows NDPR compliance requirements --`;
+
+    const blob = new Blob([templateContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'ndpr-privacy-policy-template.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+function scheduleAudit() {
+    // Open calendar scheduling (simulated)
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    
+    alert(`Compliance Audit Scheduled!\n\nProposed Date: ${nextMonth.toLocaleDateString()}\n\nStatus: Pending Confirmation\n\n(Would integrate with calendar API in production)`);
+}
 
         // Simulate real-time updates
         setInterval(() => {
