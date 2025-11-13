@@ -460,18 +460,29 @@ router.get("/user-dashboard", requireAuth, async (req, res) => {
     const privacyScore = totalConsents > 0 ? Math.round((activeConsents / totalConsents) * 100) : 0;
 
     // Calculate real data rights used
-const dataRequestsCount = await pool.query(
-    "SELECT COUNT(*) as count FROM data_requests WHERE user_id = $1",
-    [req.user.id]
-);
-const dataRightsUsed = parseInt(dataRequestsCount.rows[0].count);
+    const dataRequestsCount = await pool.query(
+      "SELECT COUNT(*) as count FROM data_requests WHERE user_id = $1",
+      [req.user.id]
+    );
+    const dataRightsUsed = parseInt(dataRequestsCount.rows[0].count);
 
-res.render("user-dashboard", { 
-  user: req.user,
-  consents: consents.rows,
-  organizations: organizations.rows,
-  privacyScore: privacyScore,
-  dataRightsUsed: dataRightsUsed  // Add this
+    res.render("user-dashboard", { 
+      user: req.user,
+      consents: consents.rows,
+      organizations: organizations.rows,
+      privacyScore: privacyScore,
+      dataRightsUsed: dataRightsUsed
+    });
+  } catch (err) {
+    console.error("Dashboard error:", err);
+    res.render("user-dashboard", { 
+      user: req.user,
+      consents: [],
+      organizations: [],
+      privacyScore: 0,
+      dataRightsUsed: 0
+    });
+  }
 });
 
 // Organization Dashboard
