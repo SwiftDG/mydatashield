@@ -159,6 +159,15 @@ padding: 1.5rem !important;
   color: #ffffff !important;
 }
 
+.pro-card, .pro-card-body {
+background-color: #1c1c1c !important; 
+color: #ffffff !important; 
+}
+
+.pro-card .table, .pro-card .text-muted, .pro-card h5, .pro-card p, .pro-card small {
+ color: #ffffff !important;
+ background-color: #1c1c1c !important; }.
+
 /* Tables */
 .table {
   color: #ffffff;
