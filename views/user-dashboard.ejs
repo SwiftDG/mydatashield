@@ -4,12 +4,12 @@
         <!-- Dashboard Header -->
         <div class="row mb-4">
             <div class="col">
-                <h1 class="h3 fw-bold">My Data Dashboard</h1>
-                <p class="text-muted">Manage your data consents and privacy settings</p>
+                <h1 class="dashboard-title">My Data Dashboard</h1>
+                <p class="dashboard-subtitle">Manage your data consents and privacy settings</p>
             </div>
             <div class="col-auto">
-                <div class="card bg-light border-0">
-                    <div class="card-body py-2">
+                <div class="pro-card">
+                    <div class="card-body py-2 text-center">
                         <small class="text-muted">Privacy Score</small>
                         <h4 class="mb-0 text-success"><%= privacyScore || 0 %>%</h4>
                     </div>
@@ -20,7 +20,7 @@
         <!-- Quick Stats -->
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
-                <div class="card custom-card border-0 bg-primary text-white">
+                <div class="stat-card">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= consents ? consents.length : 0 %></h5>
                         <small>Organizations</small>
@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card custom-card border-0 bg-success text-white">
+                <div class="stat-card success">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= consents ? consents.filter(c => c.consent_given).length : 0 %>
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card custom-card border-0 bg-warning text-white">
+                <div class="stat-card warning">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= consents ? consents.filter(c => !c.consent_given).length : 0 %>
@@ -48,7 +48,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card custom-card border-0 bg-info text-white">
+                <div class="stat-card info">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= dataRightsUsed || 0 %></h5>
                         <small>Data Rights Used</small>
@@ -60,11 +60,11 @@
         <!-- Consent Management -->
         <div class="row">
             <div class="col-lg-8">
-                <div class="card custom-card border-0 shadow-sm">
-                    <div class="card-header bg-white">
+                <div class="pro-card">
+                    <div class="pro-card-header">
                         <h5 class="mb-0">My Data Consents</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="pro-card-body">
                         <% if (consents && consents.length > 0) { %>
                             <div class="table-responsive">
                                 <table class="table table-hover">
@@ -134,7 +134,7 @@
                                         <p class="text-muted mb-2">Available organizations to grant consent:</p>
                                         <div class="d-flex flex-wrap gap-2 justify-content-center">
                                             <% organizations.forEach(org => { %>
-                                                <button class="btn btn-outline-primary btn-sm" onclick="grantConsent(<%= org.id %>)">
+                                                <button class="btn btn-primary btn-sm" onclick="grantConsent(<%= org.id %>)">
                                                     Grant to <%= org.name %>
                                                 </button>
                                             <% }) %>
@@ -152,22 +152,22 @@
             <!-- Quick Actions Sidebar -->
             <div class="col-lg-4">
                 <!-- Data Rights Card -->
-                <div class="card custom-card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
+                <div class="pro-card mb-4">
+                    <div class="pro-card-header">
                         <h6 class="mb-0">Exercise Your Data Rights</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="pro-card-body">
                         <div class="d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm text-start" onclick="requestDataAccess()">
+                            <button class="btn btn-primary btn-sm text-start" onclick="requestDataAccess()">
                                 Request Data Access
                             </button>
-                            <button class="btn btn-outline-warning btn-sm text-start" onclick="requestDataCorrection()">
+                            <button class="btn btn-warning btn-sm text-start" onclick="requestDataCorrection()">
                                 Request Data Correction
                             </button>
-                            <button class="btn btn-outline-danger btn-sm text-start" onclick="requestDataDeletion()">
+                            <button class="btn btn-danger btn-sm text-start" onclick="requestDataDeletion()">
                                 Request Data Deletion
                             </button>
-                            <button class="btn btn-outline-info btn-sm text-start" onclick="downloadData()">
+                            <button class="btn btn-info btn-sm text-start" onclick="downloadData()">
                                 Download My Data
                             </button>
                         </div>
@@ -175,8 +175,8 @@
                 </div>
 
                 <!-- Privacy Tips -->
-                <div class="card custom-card border-0 bg-light">
-                    <div class="card-body">
+                <div class="pro-card">
+                    <div class="pro-card-body">
                         <h6>Privacy Tips</h6>
                         <ul class="small text-muted">
                             <li>Regularly review your data consents</li>
