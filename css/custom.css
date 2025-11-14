@@ -8,7 +8,180 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: #f8f9fa; /* Light content bg */
+  color: #212529;/* MyDataShield Revised CSS - Lighter, Fixed Edition */
+
+/* Base Reset and Typography */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f8f9fa;
   color: #212529;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: #212529;
+}
+
+p, small {
+  color: #6c757d;
+}
+
+/* Navbar (Subtle gradient) */
+.navbar {
+  background: #007bff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-brand, .nav-link {
+  color: #fff !important;
+}
+
+.nav-link:hover {
+  color: #e9ecef !important;
+}
+
+/* Hero Section (Landing - Light blue tint, no heavy gradient) */
+.hero-section {
+  background-color: #007bff;
+  color: #fff;
+  padding: 4rem 0;
+}
+
+.hero-section .progress {
+  height: 25px;
+  background-color: #e9ecef;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.hero-section .progress-bar {
+  transition: width 0.6s ease;
+}
+
+/* Features Section (Subtle cards) */
+#features {
+  background-color: #f8f9fa;
+}
+
+.feature-card {
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  transition: box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Dashboard Shared */
+.dashboard-title {
+  font-size: 2.25rem;
+}
+
+.dashboard-subtitle {
+  font-size: 0.9rem;
+}
+
+/* Cards (Lighter shadows, no gradients here) */
+.pro-card, .stat-card, .card {
+  background-color: #fff;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  transition: box-shadow 0.2s;
+}
+
+.pro-card:hover, .stat-card:hover, .card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.pro-card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+}
+
+/* Color-coded Stats (Subtle tints) */
+.stat-card.success .card-body { background-color: #28a74505; }
+.stat-card.warning .card-body { background-color: #ffc10705; }
+.stat-card.info .card-body { background-color: #17a2b805; }
+
+/* Tables and Badges */
+.table th {
+  font-weight: 500;
+}
+
+.badge.bg-success { background-color: #28a745 !important; }
+.badge.bg-warning { background-color: #ffc107 !important; color: #212529 !important; }
+.badge.bg-danger { background-color: #dc3545 !important; }
+
+/* Progress Bars (Color-coded) */
+.progress {
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+.progress-bar.bg-success { background-color: #28a745; }
+.progress-bar.bg-warning { background-color: #ffc107; }
+.progress-bar.bg-danger { background-color: #dc3545; }
+
+/* Buttons (Light hover lift, no heavy gradients) */
+.btn {
+  transition: box-shadow 0.2s;
+}
+
+.btn:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-primary { background-color: #007bff; border-color: #007bff; }
+.btn-primary:hover { background-color: #0069d9; border-color: #0062cc; }
+
+.btn-success { background-color: #28a745; }
+.btn-warning { background-color: #ffc107; color: #212529; }
+.btn-danger { background-color: #dc3545; }
+.btn-info { background-color: #17a2b8; }
+
+/* Forms */
+.form-control {
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.1);
+}
+
+/* Trust Icons (If added) */
+.trust-icon::before {
+  font-family: "bootstrap-icons";
+  margin-right: 0.5rem;
+  color: #28a745;
+}
+
+/* Mobile Fixes (Stack everything cleanly) */
+@media (max-width: 768px) {
+  .hero-section { padding: 3rem 1rem; }
+  .d-flex.flex-wrap { flex-direction: column; }
+  .table-responsive { overflow-x: auto; }
+  [class*="col-"] { margin-bottom: 1rem; }
+}
+
+/* Accessibility */
+:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 1px;
+}
   line-height: 1.6;
 }
 
