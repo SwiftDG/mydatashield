@@ -4,23 +4,23 @@
         <!-- Dashboard Header -->
         <div class="row mb-4">
             <div class="col">
-                <h1 class="h3 fw-bold">Organization Dashboard</h1>
-                <p class="text-muted">Manage compliance scans and user data consents</p>
+                <h1 class="dashboard-title">Organization Dashboard</h1>
+                <p class="dashboard-subtitle">Manage compliance scans and user data consents</p>
             </div>
             <div class="col-auto">
-    <div class="card bg-primary text-white border-0">
-        <div class="card-body py-2">
-            <small class="text-white-50">Compliance Score</small>
-            <h4 class="mb-0"><%= complianceScore %>%</h4>
-        </div>
-    </div>
-</div>
+                <div class="pro-card">
+                    <div class="card-body py-2 text-center">
+                        <small class="text-muted">Compliance Score</small>
+                        <h4 class="mb-0"><%= complianceScore %>%</h4>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Quick Stats -->
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
-                <div class="card custom-card border-0 bg-success text-white">
+                <div class="stat-card">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= userConsents ? userConsents.length : 0 %></h5>
                         <small>Total Users</small>
@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card custom-card border-0 bg-info text-white">
+                <div class="stat-card info">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= userConsents ? userConsents.filter(uc => uc.consent_given).length : 0 %>
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card custom-card border-0 bg-warning text-white">
+                <div class="stat-card warning">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= scans ? scans.length : 0 %></h5>
                         <small>Scans Completed</small>
@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-4">
-                <div class="card custom-card border-0 bg-secondary text-white">
+                <div class="stat-card success">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= scans ? scans.filter(s => s.status === 'completed').length : 0 %>
@@ -61,12 +61,12 @@
             <!-- Left Column: Scans and Upload -->
             <div class="col-lg-8">
                 <!-- Document Scan Card -->
-                <div class="card custom-card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <div class="pro-card mb-4">
+                    <div class="pro-card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">NDPR Compliance Scanner</h5>
                         <span class="badge bg-success">Live</span>
                     </div>
-                    <div class="card-body">
+                    <div class="pro-card-body">
                         <p class="text-muted mb-4">
                             Upload your documents to check NDPR compliance. We'll analyze privacy policies, 
                             terms of service, and data handling procedures.
@@ -100,11 +100,11 @@
                 </div>
 
                 <!-- Recent Scans -->
-                <div class="card custom-card border-0 shadow-sm">
-                    <div class="card-header bg-white">
+                <div class="pro-card">
+                    <div class="pro-card-header">
                         <h5 class="mb-0">Recent Compliance Scans</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="pro-card-body">
                         <% if (scans && scans.length > 0) { %>
                             <div class="table-responsive">
                                 <table class="table table-hover">
@@ -151,8 +151,8 @@
                                                 </td>
                                                 <td>
                                                     <button class="btn btn-outline-primary btn-sm" onclick="viewScanDetails(this)">
-    View Report
-</button>
+                                                        View Report
+                                                    </button>
                                                 </td>
                                             </tr>
                                         <% }) %>
@@ -175,15 +175,15 @@
             <!-- Right Column: User Consents and Actions -->
             <div class="col-lg-4">
                 <!-- User Consents Card -->
-                <div class="card custom-card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
+                <div class="pro-card mb-4">
+                    <div class="pro-card-header">
                         <h6 class="mb-0">User Consent Overview</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="pro-card-body">
                         <% if (userConsents && userConsents.length > 0) { %>
                             <div class="list-group list-group-flush">
                                 <% userConsents.forEach(consent => { %>
-                                    <div class="list-group-item px-0">
+                                    <div class="list-group-item px-0 border-light">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
                                                 <h6 class="mb-1"><%= consent.name %></h6>
@@ -214,20 +214,20 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="card custom-card border-0 bg-light">
-                    <div class="card-body">
+                <div class="pro-card">
+                    <div class="pro-card-body">
                         <h6>Quick Actions</h6>
                         <div class="d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm text-start" onclick="generateReport()">
+                            <button class="btn btn-primary btn-sm text-start" onclick="generateReport()">
                                 Generate Compliance Report
                             </button>
-                            <button class="btn btn-outline-success btn-sm text-start" onclick="viewComplianceTips()">
+                            <button class="btn btn-success btn-sm text-start" onclick="viewComplianceTips()">
                                 View NDPR Tips
                             </button>
-                            <button class="btn btn-outline-info btn-sm text-start" onclick="downloadTemplate()">
+                            <button class="btn btn-info btn-sm text-start" onclick="downloadTemplate()">
                                 Download Policy Template
                             </button>
-                            <button class="btn btn-outline-warning btn-sm text-start" onclick="scheduleAudit()">
+                            <button class="btn btn-warning btn-sm text-start" onclick="scheduleAudit()">
                                 Schedule Compliance Audit
                             </button>
                         </div>
@@ -235,37 +235,36 @@
                 </div>
 
                 <!-- NDPR Compliance Status -->
-                <div class="card custom-card border-0 shadow-sm mt-4">
-                    <div class="card-header bg-white">
+                <div class="pro-card mt-4">
+                    <div class="pro-card-header">
                         <h6 class="mb-0">NDPR Checklist</h6>
                     </div>
-                    <div class="card-body">
-                     <div class="mb-2">
-    <span class="badge bg-success me-2">✓</span>
-    <span class="small">Privacy Policy Published</span>
-</div>
-<div class="mb-2">
-    <span class="badge bg-success me-2">✓</span>
-    <span class="small">Data Protection Officer Appointed</span>
-</div>
-<div class="mb-2">
-    <span class="badge bg-secondary me-2">○</span>
-    <span class="small text-muted">Data Breach Response Plan</span>
-</div>
-<div class="mb-2">
-    <span class="badge bg-secondary me-2">○</span>
-    <span class="small text-muted">User Consent Management</span>
-</div>
-<div class="mb-2">
-    <span class="badge bg-secondary me-2">○</span>
-    <span class="small text-muted">Data Processing Records</span>
-</div>
+                    <div class="pro-card-body">
+                        <div class="mb-2">
+                            <span class="badge bg-success me-2">✓</span>
+                            <span class="small">Privacy Policy Published</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-success me-2">✓</span>
+                            <span class="small">Data Protection Officer Appointed</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-secondary me-2">○</span>
+                            <span class="small text-muted">Data Breach Response Plan</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-secondary me-2">○</span>
+                            <span class="small text-muted">User Consent Management</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-secondary me-2">○</span>
+                            <span class="small text-muted">Data Processing Records</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- JavaScript for interactive elements -->
     <script>
         // Handle form submission with loading state
