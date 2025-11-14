@@ -20,7 +20,7 @@
         <!-- Quick Stats -->
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
-                <div class="card border-0 bg-primary text-white">
+                <div class="card custom-card border-0 bg-primary text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= consents ? consents.length : 0 %></h5>
                         <small>Organizations</small>
@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 bg-success text-white">
+                <div class="card custom-card border-0 bg-success text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= consents ? consents.filter(c => c.consent_given).length : 0 %>
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 bg-warning text-white">
+                <div class="card custom-card border-0 bg-warning text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= consents ? consents.filter(c => !c.consent_given).length : 0 %>
@@ -48,7 +48,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 bg-info text-white">
+                <div class="card custom-card border-0 bg-info text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= dataRightsUsed || 0 %></h5>
                         <small>Data Rights Used</small>
@@ -60,7 +60,7 @@
         <!-- Consent Management -->
         <div class="row">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm">
+                <div class="card custom-card border-0 shadow-sm">
                     <div class="card-header bg-white">
                         <h5 class="mb-0">My Data Consents</h5>
                     </div>
@@ -152,7 +152,7 @@
             <!-- Quick Actions Sidebar -->
             <div class="col-lg-4">
                 <!-- Data Rights Card -->
-                <div class="card border-0 shadow-sm mb-4">
+                <div class="card custom-card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
                         <h6 class="mb-0">Exercise Your Data Rights</h6>
                     </div>
@@ -175,7 +175,7 @@
                 </div>
 
                 <!-- Privacy Tips -->
-                <div class="card border-0 bg-light">
+                <div class="card custom-card border-0 bg-light">
                     <div class="card-body">
                         <h6>Privacy Tips</h6>
                         <ul class="small text-muted">
