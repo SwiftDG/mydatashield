@@ -151,9 +151,9 @@
                                                 </td>
                                                 <td>
                                                     <button class="btn btn-outline-primary btn-sm" 
-                                                            onclick="viewScanDetails(<%= scan.id %>)">
-                                                        View Report
-                                                    </button>
+        onclick="viewScanDetails(<%= scan.id %>, '<%= scan.scan_name %>', <%= scan.compliance_score %>, '<%= scan.status %>')">
+    View Report
+</button>
                                                 </td>
                                             </tr>
                                         <% }) %>
