@@ -20,7 +20,7 @@
         <!-- Quick Stats -->
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
-                <div class="card border-0 bg-success text-white">
+                <div class="card custom-card border-0 bg-success text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= userConsents ? userConsents.length : 0 %></h5>
                         <small>Total Users</small>
@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 bg-info text-white">
+                <div class="card custom-card border-0 bg-info text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= userConsents ? userConsents.filter(uc => uc.consent_given).length : 0 %>
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <div class="card border-0 bg-warning text-white">
+                <div class="card custom-card border-0 bg-warning text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1"><%= scans ? scans.length : 0 %></h5>
                         <small>Scans Completed</small>
@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="col-md-3 mb-4">
-                <div class="card border-0 bg-secondary text-white">
+                <div class="card custom-card border-0 bg-secondary text-white">
                     <div class="card-body text-center py-3">
                         <h5 class="mb-1">
                             <%= scans ? scans.filter(s => s.status === 'completed').length : 0 %>
@@ -61,7 +61,7 @@
             <!-- Left Column: Scans and Upload -->
             <div class="col-lg-8">
                 <!-- Document Scan Card -->
-                <div class="card border-0 shadow-sm mb-4">
+                <div class="card custom-card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">NDPR Compliance Scanner</h5>
                         <span class="badge bg-success">Live</span>
@@ -100,7 +100,7 @@
                 </div>
 
                 <!-- Recent Scans -->
-                <div class="card border-0 shadow-sm">
+                <div class="card custom-card border-0 shadow-sm">
                     <div class="card-header bg-white">
                         <h5 class="mb-0">Recent Compliance Scans</h5>
                     </div>
@@ -175,7 +175,7 @@
             <!-- Right Column: User Consents and Actions -->
             <div class="col-lg-4">
                 <!-- User Consents Card -->
-                <div class="card border-0 shadow-sm mb-4">
+                <div class="card custom-card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
                         <h6 class="mb-0">User Consent Overview</h6>
                     </div>
@@ -214,7 +214,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="card border-0 bg-light">
+                <div class="card custom-card border-0 bg-light">
                     <div class="card-body">
                         <h6>Quick Actions</h6>
                         <div class="d-grid gap-2">
@@ -235,7 +235,7 @@
                 </div>
 
                 <!-- NDPR Compliance Status -->
-                <div class="card border-0 shadow-sm mt-4">
+                <div class="card custom-card border-0 shadow-sm mt-4">
                     <div class="card-header bg-white">
                         <h6 class="mb-0">NDPR Checklist</h6>
                     </div>
