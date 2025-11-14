@@ -223,3 +223,7 @@ footer a {
 .consent-one{
 padding: 0.5rem !important;
 }
+
+.custom-two .custom-three{
+color:black;
+}
