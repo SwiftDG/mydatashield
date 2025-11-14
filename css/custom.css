@@ -160,7 +160,9 @@ padding: 1.5rem !important;
 }
 
 /* Tables */
-
+table{
+color: black !important;
+}
 .table-hover tbody tr:hover {
   background-color: #333333;
 }
