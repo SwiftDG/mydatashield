@@ -280,9 +280,15 @@
             spinner.classList.remove('d-none');
         });
 
-        function viewScanDetails(scanId) {
-            alert(`Scan #${scanId} details would open here with full compliance report.`);
-        }
+        function viewScanDetails(scanId, scanName, score, status) {
+    const recommendations = score >= 80 ? 
+        "Strong compliance, Maintain regular audits." :
+        score >= 60 ?
+        "Good foundation. Focus on consent mechanisms and breach procedures." :
+        "Needs significant improvements. Add explicit consent, DPO appointment, and breach response plans.";
+    
+    alert(`COMPLIANCE REPORT: ${scanName}\n\n Score: ${score}%\n Status: ${status}\n\n RECOMMENDATIONS:\n${recommendations}\n\nBased on NDPR keyword analysis of your document.`);
+}
 
         function generateReport() {
     // Create and download a PDF report (simulated for now)
