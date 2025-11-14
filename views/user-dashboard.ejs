@@ -91,7 +91,7 @@
                                                     <% } %>
                                                 </td>
                                                 <td>
-                                                    <small class="text-muted">
+                                                    <small>
                                                         <% if (consent.data_categories && consent.data_categories.length > 0) { %>
                                                             <%= consent.data_categories.join(', ') %>
                                                         <% } else { %>
@@ -100,7 +100,7 @@
                                                     </small>
                                                 </td>
                                                 <td>
-                                                    <small class="text-muted">
+                                                    <small>
                                                         <%= consent.updated_at ? new Date(consent.updated_at).toLocaleDateString() : 'N/A' %>
                                                     </small>
                                                 </td>
