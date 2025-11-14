@@ -1,7 +1,5 @@
-/* MyDataShield Badass CSS - Techy, Professional Edition */
-
-/* Import Fonts (Techy: Inter for body, Roboto Mono for headings/code) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap');
+/* Import Fonts (Modern: Montserrat for headings, Inter for body) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap');
 
 /* Base Styles */
 * {
@@ -12,254 +10,208 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #0a0a0a; /* Badass black bg */
-  color: #e0e0e0; /* Light text for contrast */
+  background-color: #0a0a0a; /* Deep black bg */
+  color: #e0e0e0; /* Light gray text */
   line-height: 1.6;
-  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
+/* Headings (Bold, modern font) */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  color: #ffffff;
+  color: #ffffff; /* Pure white for visibility */
+  text-transform: uppercase; /* Techy feel */
 }
 
-p, small {
-  color: #b0b0b0;
+/* Paragraphs and small text */
+p, small, .text-muted {
+  color: #c0c0c0; /* Softer gray for better readability */
 }
 
-/* Navbar (Techy gradient: Black to deep blue) */
+/* Navbar (Gradient black to indigo, high contrast text) */
 .navbar {
-  background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, #0a0a0a, #1a1a3a); /* Black to deep indigo */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   padding: 1rem 0;
 }
 
 .navbar-brand {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 1.5rem;
-  color: #00bfff !important; /* Neon blue for brand */
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.6rem;
+  color: #00aaff !important; /* Bright cyan blue */
+  font-weight: 700;
 }
 
-.nav-link {
-  color: #e0e0e0 !important;
-  transition: color 0.3s ease, transform 0.3s ease;
+.nav-link, .navbar-text {
+  color: #ffffff !important; /* Pure white for visibility */
+  transition: color 0.3s ease;
 }
 
 .nav-link:hover {
-  color: #00bfff !important;
-  transform: translateY(-2px);
+  color: #00aaff !important; /* Cyan hover */
 }
 
-/* Hero Section (Badass gradient bg, techy overlays) */
+/* Burger icon (Brighter for visibility) */
+.navbar-toggler-icon {
+  filter: brightness(2); /* Make it whiter */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Hero Section (Gradient bg, left-aligned text) */
 .hero-section {
-  background: linear-gradient(135deg, #0a0a0a, #001f3f); /* Black to navy */
+  background: linear-gradient(135deg, #0a0a0a, #002244); /* Black to navy blue */
   color: #ffffff;
-  padding: 6rem 0;
+  padding: 5rem 0;
   position: relative;
-  overflow: hidden;
 }
 
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(0, 191, 255, 0.1) 0%, transparent 70%);
-  opacity: 0.5;
+.hero-section .col-lg-6 {
+  text-align: left !important; /* Left align text and buttons */
+}
+
+.hero-section .d-flex {
+  justify-content: flex-start; /* Buttons left */
 }
 
 .hero-section .bg-white {
-  background-color: #1e1e1e !important; /* Dark card */
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-  color: #e0e0e0;
+  background-color: #1c1c1c !important; /* Darker box */
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  color: #ffffff; /* White text inside box */
+}
+
+.hero-section h5, .hero-section small {
+  color: #ffffff !important; /* Override for visibility */
 }
 
 .hero-section .progress {
   background-color: #333333;
-  border-radius: 12px;
+  border-radius: 10px;
   height: 25px;
 }
 
 .hero-section .progress-bar {
-  background: linear-gradient(90deg, #00bfff, #007bff);
-  transition: width 1s ease-in-out;
+  background: linear-gradient(90deg, #00aaff, #0077cc); /* Cyan to blue */
 }
 
-/* Features Section (Card-based, techy hovers) */
+/* Features Section */
 #features {
   background-color: #0a0a0a;
   padding: 4rem 0;
 }
 
 .feature-card {
-  background-color: #1e1e1e;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-}
-
-.feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 191, 255, 0.2); /* Neon blue glow */
-}
-
-.feature-card .rounded-circle {
-  background: linear-gradient(135deg, #00bfff, #007bff) !important;
+  background-color: #1c1c1c;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease;
 }
 
-.feature-card:hover .rounded-circle {
-  transform: scale(1.1);
+.feature-card:hover {
+  transform: translateY(-4px);
+}
+
+.feature-card .card-title, .feature-card .card-text {
+  color: #ffffff; /* White text */
+}
+
+.feature-card .rounded-circle {
+  background: linear-gradient(135deg, #00aaff, #0077cc) !important;
 }
 
 /* CTA Section */
 .bg-light {
-  background: linear-gradient(135deg, #1e1e1e, #0a0a0a) !important;
-  color: #e0e0e0;
+  background: linear-gradient(135deg, #1c1c1c, #0a0a0a) !important;
+  color: #ffffff;
 }
 
-/* Dashboard Shared Styles */
+/* Dashboard Styles */
 .dashboard-title {
-  font-size: 2.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
 }
 
 .dashboard-subtitle {
-  color: #b0b0b0;
+  color: #c0c0c0;
 }
 
-/* Cards (Pro-card, Stat-card: Dark, gradient accents) */
+/* Cards (Dark bg, white text) */
 .pro-card, .stat-card, .card {
-  background-color: #1e1e1e;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease;
+  background-color: #1c1c1c;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  color: #ffffff; /* Ensure white text */
 }
 
-.pro-card:hover, .stat-card:hover, .card:hover {
-  transform: translateY(-3px);
-}
-
-.pro-card-header {
-  background: linear-gradient(135deg, #1e1e1e, #333333);
-  border-bottom: 1px solid #444444;
-  padding: 1rem;
+.pro-card-header, .stat-card .card-body {
   color: #ffffff;
+  background: linear-gradient(135deg, #1c1c1c, #333333);
 }
 
-/* Color-coded Stats (Gradients for badass feel) */
-.stat-card .card-body {
-  background: linear-gradient(135deg, #1e1e1e, #0a0a0a);
+.stat-card h5, .stat-card small {
+  color: #ffffff !important;
 }
 
-.stat-card.success .card-body { background: linear-gradient(135deg, #28a74520, #1e1e1e); color: #28a745; }
-.stat-card.warning .card-body { background: linear-gradient(135deg, #ffc10720, #1e1e1e); color: #ffc107; }
-.stat-card.info .card-body { background: linear-gradient(135deg, #17a2b820, #1e1e1e); color: #17a2b8; }
-
-/* Tables (Dark theme, hover gradients) */
+/* Tables */
 .table {
-  --bs-table-bg: #1e1e1e;
-  --bs-table-color: #e0e0e0;
-  --bs-table-hover-bg: #333333;
-}
-
-.table th {
   color: #ffffff;
-  background-color: #0a0a0a;
 }
 
-.badge.bg-success { background: linear-gradient(135deg, #28a745, #1e7e34) !important; }
-.badge.bg-warning { background: linear-gradient(135deg, #ffc107, #e0a800) !important; color: #212529 !important; }
-.badge.bg-danger { background: linear-gradient(135deg, #dc3545, #c82333) !important; }
+.table th, .table td {
+  color: #ffffff;
+}
 
-/* Progress Bars (Gradient fills) */
+.table-hover tbody tr:hover {
+  background-color: #333333;
+}
+
+/* Progress Bars */
 .progress {
   background-color: #333333;
-  border-radius: 6px;
 }
 
 .progress-bar {
-  background: linear-gradient(90deg, #00bfff, #007bff);
+  background: linear-gradient(90deg, #00aaff, #0077cc);
 }
 
-/* Buttons (Gradient, techy hovers) */
-.btn {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+/* Badges (High contrast) */
+.badge.bg-success { background: linear-gradient(135deg, #28a745, #218838); color: #ffffff !important; }
+.badge.bg-warning { background: linear-gradient(135deg, #ffc107, #e0a800); color: #000000 !important; }
+.badge.bg-danger { background: linear-gradient(135deg, #dc3545, #c82333); color: #ffffff !important; }
 
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 191, 255, 0.3);
-}
-
+/* Buttons */
 .btn-primary {
   background: linear-gradient(135deg, #007bff, #0056b3);
-  border: none;
+  color: #ffffff;
 }
 
 .btn-primary:hover {
   background: linear-gradient(135deg, #0069d9, #004085);
 }
 
-.btn-success { background: linear-gradient(135deg, #28a745, #1e7e34); }
-.btn-warning { background: linear-gradient(135deg, #ffc107, #e0a800); color: #212529; }
-.btn-danger { background: linear-gradient(135deg, #dc3545, #c82333); }
-.btn-info { background: linear-gradient(135deg, #17a2b8, #138496); }
-
-/* Forms (Techy inputs) */
+/* Forms */
 .form-control {
   background-color: #333333;
+  color: #ffffff;
   border: 1px solid #444444;
-  color: #e0e0e0;
-  border-radius: 6px;
-  transition: border-color 0.3s ease;
 }
 
 .form-control:focus {
-  border-color: #00bfff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 191, 255, 0.25);
+  border-color: #00aaff;
 }
 
-/* Trust Signals (Neon icons) */
-.trust-icon::before {
-  content: "\f3ed"; /* Bootstrap shield-lock */
-  font-family: "bootstrap-icons";
-  color: #00bfff;
-  margin-right: 0.5rem;
-}
-
-/* Footer (Black, professional) */
+/* Footer */
 footer.bg-dark {
-  background: linear-gradient(135deg, #0a0a0a, #1a1a2e) !important;
-  color: #b0b0b0;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a3a) !important;
+  color: #c0c0c0;
 }
 
 footer a {
-  color: #00bfff;
-  transition: color 0.3s ease;
+  color: #00aaff;
 }
 
-footer a:hover {
-  color: #ffffff;
-}
-
-/* Mobile Responsive */
+/* Mobile Fixes */
 @media (max-width: 768px) {
-  .container { padding: 1rem; }
-  .row { flex-direction: column; gap: 1rem; }
-  .col-md-3, .col-lg-8, .col-lg-4, .col-md-4, .col-lg-6 { width: 100%; margin-bottom: 1rem; }
+  .hero-section .row { flex-direction: column; text-align: left; }
   .table-responsive { overflow-x: auto; }
-  .hero-section { padding: 3rem 1rem; text-align: center; }
-}
-
-/* Accessibility */
-:focus {
-  outline: 2px solid #00bfff;
-  outline-offset: 2px;
+  .d-flex { flex-direction: column; align-items: flex-start; }
 }
