@@ -160,13 +160,6 @@ padding: 1.5rem !important;
 }
 
 /* Tables */
-.table {
-  color: #ffffff;
-}
-
-.table th, .table td {
-  color: #ffffff;
-}
 
 .table-hover tbody tr:hover {
   background-color: #333333;
