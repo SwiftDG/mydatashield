@@ -361,15 +361,7 @@ function scheduleAudit() {
     alert(`Compliance Audit Scheduled!\n\nProposed Date: ${nextMonth.toLocaleDateString()}\n\nStatus: Pending Confirmation\n\n(Would integrate with calendar API in production)`);
 }
 
-        // Simulate real-time updates
-        setInterval(() => {
-            const complianceScore = document.querySelector('.card.bg-primary h4');
-            if (complianceScore && Math.random() > 0.7) {
-                const currentScore = parseInt(complianceScore.textContent);
-                const newScore = Math.min(100, currentScore + Math.floor(Math.random() * 3));
-                complianceScore.textContent = newScore + '%';
-            }
-        }, 5000);
+        
     </script>
 
 <%- include('partials/footer') %>
