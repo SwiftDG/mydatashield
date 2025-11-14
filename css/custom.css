@@ -229,7 +229,7 @@ color:black;
 }
 
 .pro-card-body, .table, .table-hover tbody tr {
-    background-color: #f8f9fa !important; /* Light background */
+    color: #000000 !important;
 }
 
 .custom-two .custom-three {
