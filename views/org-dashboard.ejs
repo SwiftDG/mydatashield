@@ -150,8 +150,7 @@
                                                     <% } %>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-outline-primary btn-sm" 
-        onclick="viewScanDetails(<%= scan.id %>, &quot;<%= scan.scan_name %>&quot;, <%= scan.compliance_score %>, &quot;<%= scan.status %>&quot;)">
+                                                    <button class="btn btn-outline-primary btn-sm" onclick="viewScanDetails(this)">
     View Report
 </button>
                                                 </td>
@@ -280,14 +279,25 @@
             spinner.classList.remove('d-none');
         });
 
-        function viewScanDetails(scanId, scanName, score, status) {
-    const recommendations = score >= 80 ? 
-        "Strong compliance, Maintain regular audits." :
-        score >= 60 ?
-        "Good foundation. Focus on consent mechanisms and breach procedures." :
-        "Needs significant improvements. Add explicit consent, DPO appointment, and breach response plans.";
+        function viewScanDetails(button) {
+    // Get the table row that contains this button
+    const row = button.closest('tr');
     
-    alert(`COMPLIANCE REPORT: ${scanName}\n\n Score: ${score}%\n Status: ${status}\n\n RECOMMENDATIONS:\n${recommendations}\n\nBased on NDPR keyword analysis of your document.`);
+    // Extract data from the row cells
+    const scanName = row.cells[0].querySelector('strong').textContent;
+    const scoreText = row.cells[2].querySelector('.fw-bold').textContent;
+    const score = parseInt(scoreText);
+    const status = row.cells[3].querySelector('.badge').textContent.trim();
+    
+    // Generate recommendations based on score
+    const recommendations = score >= 80 ? 
+        "Strong compliance! Maintain regular audits and continue monitoring." :
+        score >= 60 ?
+        "Good foundation. Focus on improving consent mechanisms and data breach response procedures." :
+        "Needs significant improvements. Add explicit consent mechanisms, appoint a Data Protection Officer, and establish data breach response plans.";
+    
+    // Show the report
+    alert(`COMPLIANCE REPORT\n\n Document: ${scanName}\n Score: ${score}%\n Status: ${status}\n\n  RECOMMENDATIONS:\n${recommendations}\n\nBased on automated NDPR keyword analysis.`);
 }
 
         function generateReport() {
