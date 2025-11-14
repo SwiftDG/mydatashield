@@ -159,14 +159,6 @@ padding: 1.5rem !important;
   color: #ffffff !important;
 }
 
-.pro-card, .pro-card-body {
-color: black !important; 
-}
-
-.pro-card .table, .pro-card .text-muted, .pro-card h5, .pro-card p, .pro-card small {
- color: black !important;
-}
-
 /* Tables */
 .table {
   color: #ffffff;
