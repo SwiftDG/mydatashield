@@ -227,3 +227,11 @@ padding: 0.5rem !important;
 .custom-two .custom-three{
 color:black;
 }
+
+.pro-card-body, .table, .table-hover tbody tr {
+    background-color: #f8f9fa !important; /* Light background */
+}
+
+.custom-two .custom-three {
+    color: #000000 !important; /* Black text */
+}
