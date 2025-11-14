@@ -28,6 +28,10 @@ p, small, .text-muted {
   color: #c0c0c0; /* Softer gray for better readability */
 }
 
+.text-muted{
+color: #ffffff !important;
+}
+
 /* Navbar (Gradient black to indigo, high contrast text) */
 .navbar {
   background: linear-gradient(135deg, #0a0a0a, #1a1a3a); /* Black to deep indigo */
