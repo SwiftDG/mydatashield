@@ -223,3 +223,11 @@ footer a {
   .table-responsive { overflow-x: auto; }
   .d-flex { flex-direction: column; align-items: flex-start; }
 }
+
+
+.consent-one{
+padding: 1rem !important;
+}
+.consent-two{
+color: black !important;
+}
