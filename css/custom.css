@@ -188,6 +188,28 @@ padding: 1.5rem !important;
   background: linear-gradient(135deg, #0069d9, #004085);
 }
 
+/* Index page specific button fixes */
+.btn-light {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa) !important;
+  color: #000000 !important;
+  border: 1px solid #ffffff !important;
+}
+
+.btn-light:hover {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+  color: #000000 !important;
+}
+
+.btn-outline-light {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.btn-outline-light:hover {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
 /* Forms */
 .form-control {
   background-color: #333333;
@@ -220,70 +242,97 @@ footer a {
 padding: 0.5rem !important;
 }
 
-/* Organization Dashboard - Black text for specific elements */
-.organization-dashboard .pro-card-body,
-.organization-dashboard .table,
-.organization-dashboard .table th,
-.organization-dashboard .table td,
-.organization-dashboard .table strong,
+/* ===== ORGANIZATION DASHBOARD SPECIFIC STYLES ===== */
+
+/* Organization Dashboard - Keep white text for most elements */
+.organization-dashboard .pro-card .card-body .text-muted,
+.organization-dashboard .pro-card small.text-muted,
+.organization-dashboard .pro-card-header .text-muted {
+    color: #ffffff !important;
+}
+
+/* Organization Dashboard form labels and text - WHITE */
 .organization-dashboard .form-label,
-.organization-dashboard .form-control,
 .organization-dashboard .form-text,
-.organization-dashboard .text-muted,
-.organization-dashboard small.text-muted,
+.organization-dashboard .pro-card-body p.text-muted,
+.organization-dashboard .pro-card-body .text-muted {
+    color: #ffffff !important;
+}
+
+/* Organization Dashboard form inputs - keep dark theme */
+.organization-dashboard .form-control {
+    background-color: #333333 !important;
+    color: #ffffff !important;
+    border: 1px solid #444444 !important;
+}
+
+/* Organization Dashboard user consent list padding */
+.organization-dashboard .list-group-item {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
 .organization-dashboard .list-group-item h6,
 .organization-dashboard .list-group-item small.text-muted {
-    color: #000000 !important;
+    color: #ffffff !important;
 }
 
-/* Organization Dashboard form styling */
-.organization-dashboard .form-control {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border: 1px solid #ddd !important;
-}
+/* ===== USER DASHBOARD SPECIFIC STYLES ===== */
 
-/* Organization Dashboard table hover */
-.organization-dashboard .table-hover tbody tr:hover {
-    background-color: #f8f9fa !important;
-}
-
-.organization-dashboard .table-hover tbody tr:hover td {
-    color: #000000 !important;
-}
-
-/* User Dashboard - Keep white text */
-.user-dashboard .pro-card-body,
+/* User Dashboard table - make text BLACK for readability */
 .user-dashboard .table,
 .user-dashboard .table th,
 .user-dashboard .table td,
 .user-dashboard .table strong,
-.user-dashboard .text-muted,
-.user-dashboard small.text-muted {
-    color: #ffffff !important;
+.user-dashboard .table small {
+    color: #000000 !important;
 }
 
-/* User Dashboard table hover */
+/* User Dashboard revoke button - restore red styling */
+.user-dashboard .btn-outline-danger {
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    background-color: transparent !important;
+}
+
+.user-dashboard .btn-outline-danger:hover {
+    color: #ffffff !important;
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+/* User Dashboard approve button */
+.user-dashboard .btn-outline-success {
+    color: #198754 !important;
+    border-color: #198754 !important;
+    background-color: transparent !important;
+}
+
+.user-dashboard .btn-outline-success:hover {
+    color: #ffffff !important;
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+/* Ensure proper contrast in user dashboard table */
 .user-dashboard .table-hover tbody tr:hover {
-    background-color: #333333 !important;
+    background-color: #f8f9fa !important;
 }
 
-.user-dashboard .table-hover tbody tr:hover td {
-    color: #ffffff !important;
+.user-dashboard .table-hover tbody tr:hover td,
+.user-dashboard .table-hover tbody tr:hover small {
+    color: #000000 !important;
 }
 
 /* Common styles that work for both */
 .pro-card-body .badge,
-.pro-card-body .btn,
 .progress-bar {
     color: #ffffff !important;
 }
 
-/* Ensure NDPR checklist items stay visible */
-.organization-dashboard .badge.bg-success + .small,
-.organization-dashboard .badge.bg-secondary + .small.text-muted,
-.user-dashboard .badge.bg-success + .small,
-.user-dashboard .badge.bg-secondary + .small.text-muted {
+/* Ensure NDPR checklist items stay visible in both dashboards */
+.badge.bg-success + .small,
+.badge.bg-secondary + .small.text-muted {
     color: #ffffff !important;
 }
 
@@ -292,22 +341,28 @@ padding: 0.5rem !important;
     color: #ffffff !important;
 }
 
-/* Additional specificity for form elements in organization dashboard */
+/* Additional specificity for form elements */
 .organization-dashboard input::placeholder {
-    color: #666666 !important;
+    color: #cccccc !important;
 }
 
 .organization-dashboard .form-text {
-    color: #666666 !important;
+    color: #cccccc !important;
 }
 
-/* Ensure table headers are properly styled in both dashboards */
+/* Ensure table headers are properly styled */
 .organization-dashboard .table thead th {
+    color: #ffffff !important;
+    background-color: #333333 !important;
+}
+
+.user-dashboard .table thead th {
     color: #000000 !important;
     background-color: #f8f9fa !important;
 }
 
-.user-dashboard .table thead th {
+/* Fix compliance score text in organization dashboard */
+.organization-dashboard .pro-card .card-body small.text-muted,
+.organization-dashboard .pro-card .card-body .text-muted {
     color: #ffffff !important;
-    background-color: #333333 !important;
 }
