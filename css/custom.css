@@ -235,3 +235,37 @@ color:black;
 .custom-two .custom-three {
     color: #000000 !important; /* Black text */
 }
+
+/* Organization Dashboard - Black text for specific elements */
+.organization-dashboard .pro-card-body .form-label,
+.organization-dashboard .pro-card-body .form-control,
+.organization-dashboard .pro-card-body .form-text,
+.organization-dashboard .pro-card-body .text-muted,
+.organization-dashboard .pro-card-body small.text-muted,
+.organization-dashboard .pro-card-body .list-group-item h6,
+.organization-dashboard .pro-card-body .list-group-item small.text-muted,
+.organization-dashboard .pro-card-body table th,
+.organization-dashboard .pro-card-body table td,
+.organization-dashboard .pro-card-body table strong,
+.organization-dashboard .pro-card-body table .text-muted {
+    color: #000000 !important;
+}
+
+/* User Dashboard - Keep white text */
+.user-dashboard .pro-card-body .text-muted,
+.user-dashboard .pro-card-body small.text-muted,
+.user-dashboard .pro-card-body table .text-muted {
+    color: #ffffff !important;
+}
+
+/* Common styles that work for both */
+.pro-card-body .badge,
+.pro-card-body .btn,
+.pro-card-body .progress-bar {
+    color: #ffffff !important;
+}
+
+.organization-dashboard .form-control {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
