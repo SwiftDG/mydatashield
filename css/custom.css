@@ -366,3 +366,53 @@ padding: 0.5rem !important;
 .organization-dashboard .pro-card .card-body .text-muted {
     color: #ffffff !important;
 }
+
+/* ===== FIX REMAINING ISSUES ===== */
+
+/* Fix index.ejs button - force black text */
+.btn-light {
+  color: #000000 !important;
+}
+
+/* Fix org-dashboard dates - make them BLACK */
+.organization-dashboard .table td small,
+.organization-dashboard .table .text-muted {
+  color: #000000 !important;
+}
+
+/* Fix org-dashboard "View Report" button */
+.organization-dashboard .btn-outline-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.organization-dashboard .btn-outline-primary:hover {
+  background: linear-gradient(135deg, #0069d9, #004085) !important;
+  color: #ffffff !important;
+}
+
+/* Fix org-dashboard user consent text - make it BLACK */
+.organization-dashboard .list-group-item h6,
+.organization-dashboard .list-group-item small,
+.organization-dashboard .list-group-item .text-muted {
+  color: #000000 !important;
+}
+
+/* Ensure org-dashboard table has proper contrast */
+.organization-dashboard .table,
+.organization-dashboard .table td,
+.organization-dashboard .table th {
+  color: #000000 !important;
+}
+
+/* Fix org-dashboard user consent section background */
+.organization-dashboard .list-group-item {
+  background-color: #ffffff !important;
+  border-color: #dee2e6 !important;
+}
+
+/* Make sure org-dashboard form help text is visible but not white */
+.organization-dashboard .form-text {
+  color: #666666 !important;
+}
