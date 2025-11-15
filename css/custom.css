@@ -416,3 +416,35 @@ padding: 0.5rem !important;
 .organization-dashboard .form-text {
   color: #666666 !important;
 }
+
+/* ===== FINAL ORG-DASHBOARD FIXES ===== */
+
+/* Fix org-dashboard dates - more specific targeting */
+.organization-dashboard .table tbody td small,
+.organization-dashboard .table tbody .text-muted,
+.organization-dashboard .pro-card-body .table .text-muted {
+    color: #000000 !important;
+}
+
+/* Fix org-dashboard user consent email and data text - very specific targeting */
+.organization-dashboard .list-group-item small.text-muted,
+.organization-dashboard .pro-card-body .list-group-item small,
+.organization-dashboard .list-group-item .text-muted {
+    color: #000000 !important;
+}
+
+/* Fix the "Approved" badge text in user consent section */
+.organization-dashboard .list-group-item .badge {
+    color: #ffffff !important;
+}
+
+/* Ensure all user consent text is black */
+.organization-dashboard .pro-card-body .list-group-flush .list-group-item,
+.organization-dashboard .pro-card-body .list-group-flush .list-group-item *:not(.badge) {
+    color: #000000 !important;
+}
+
+/* Specific fix for the data categories text */
+.organization-dashboard .list-group-item small.text-muted:last-child {
+    color: #000000 !important;
+}
