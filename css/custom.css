@@ -153,16 +153,13 @@ color: #ffffff !important;
 
 .pro-card .card-body{
 padding: 1.5rem !important;
-} 
+}
 
 .stat-card h5, .stat-card small {
   color: #ffffff !important;
 }
 
 /* Tables */
-table{
-color: black !important;
-}
 .table-hover tbody tr:hover {
   background-color: #333333;
 }
@@ -219,53 +216,98 @@ footer a {
   .d-flex { flex-direction: column; align-items: flex-start; }
 }
 
-
 .consent-one{
 padding: 0.5rem !important;
 }
 
-.custom-two .custom-three{
-color:black;
-}
-
-.pro-card-body, .table, .table-hover tbody tr {
+/* Organization Dashboard - Black text for specific elements */
+.organization-dashboard .pro-card-body,
+.organization-dashboard .table,
+.organization-dashboard .table th,
+.organization-dashboard .table td,
+.organization-dashboard .table strong,
+.organization-dashboard .form-label,
+.organization-dashboard .form-control,
+.organization-dashboard .form-text,
+.organization-dashboard .text-muted,
+.organization-dashboard small.text-muted,
+.organization-dashboard .list-group-item h6,
+.organization-dashboard .list-group-item small.text-muted {
     color: #000000 !important;
 }
 
-.custom-two .custom-three {
-    color: #000000 !important; /* Black text */
+/* Organization Dashboard form styling */
+.organization-dashboard .form-control {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ddd !important;
 }
 
-/* Organization Dashboard - Black text for specific elements */
-.organization-dashboard .pro-card-body .form-label,
-.organization-dashboard .pro-card-body .form-control,
-.organization-dashboard .pro-card-body .form-text,
-.organization-dashboard .pro-card-body .text-muted,
-.organization-dashboard .pro-card-body small.text-muted,
-.organization-dashboard .pro-card-body .list-group-item h6,
-.organization-dashboard .pro-card-body .list-group-item small.text-muted,
-.organization-dashboard .pro-card-body table th,
-.organization-dashboard .pro-card-body table td,
-.organization-dashboard .pro-card-body table strong,
-.organization-dashboard .pro-card-body table .text-muted {
+/* Organization Dashboard table hover */
+.organization-dashboard .table-hover tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.organization-dashboard .table-hover tbody tr:hover td {
     color: #000000 !important;
 }
 
 /* User Dashboard - Keep white text */
-.user-dashboard .pro-card-body .text-muted,
-.user-dashboard .pro-card-body small.text-muted,
-.user-dashboard .pro-card-body table .text-muted {
+.user-dashboard .pro-card-body,
+.user-dashboard .table,
+.user-dashboard .table th,
+.user-dashboard .table td,
+.user-dashboard .table strong,
+.user-dashboard .text-muted,
+.user-dashboard small.text-muted {
+    color: #ffffff !important;
+}
+
+/* User Dashboard table hover */
+.user-dashboard .table-hover tbody tr:hover {
+    background-color: #333333 !important;
+}
+
+.user-dashboard .table-hover tbody tr:hover td {
     color: #ffffff !important;
 }
 
 /* Common styles that work for both */
 .pro-card-body .badge,
 .pro-card-body .btn,
-.pro-card-body .progress-bar {
+.progress-bar {
     color: #ffffff !important;
 }
 
-.organization-dashboard .form-control {
+/* Ensure NDPR checklist items stay visible */
+.organization-dashboard .badge.bg-success + .small,
+.organization-dashboard .badge.bg-secondary + .small.text-muted,
+.user-dashboard .badge.bg-success + .small,
+.user-dashboard .badge.bg-secondary + .small.text-muted {
+    color: #ffffff !important;
+}
+
+/* Make sure all interactive elements are visible */
+.btn, .badge, .progress-bar {
+    color: #ffffff !important;
+}
+
+/* Additional specificity for form elements in organization dashboard */
+.organization-dashboard input::placeholder {
+    color: #666666 !important;
+}
+
+.organization-dashboard .form-text {
+    color: #666666 !important;
+}
+
+/* Ensure table headers are properly styled in both dashboards */
+.organization-dashboard .table thead th {
     color: #000000 !important;
-    background-color: #ffffff !important;
+    background-color: #f8f9fa !important;
+}
+
+.user-dashboard .table thead th {
+    color: #ffffff !important;
+    background-color: #333333 !important;
 }
