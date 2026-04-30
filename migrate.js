@@ -1,7 +1,7 @@
 const { Client } = require('pg');
 
 const client = new Client({
-  connectionString: 'YOUR_EXTERNAL_DATABASE_URL',
+  connectionString: 'postgresql://mydatashield_db_user:0PH88WOB2gsVtZ7BFUT9R02QFgSmmqdG@dpg-d7pr6ke7r5hc73ahb1sg-a.oregon-postgres.render.com/mydatashield_db',
   ssl: { rejectUnauthorized: false }
 });
 
