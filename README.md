@@ -1,4 +1,4 @@
-# MyDataShield 🛡️
+# MyDataShield
 
 **Automated NDPR Compliance Scanner for Nigerian SMEs**
 
